@@ -1,0 +1,33 @@
+name: actilink
+
+packages:
+  - packages/*
+  - apps/*
+    
+scripts:
+  analyze:
+    exec: dart analyze .
+
+  generate:
+    run: melos exec -c 1 --depends-on build_runner -- dart run build_runner build
+
+  dev:
+    exec: flutter run --flavor development --target lib/main_development.dart
+    packageFilters:
+      scope: actilink
+
+  stage:
+    exec: flutter run --flavor staging --target lib/main_staging.dart
+    packageFilters:
+      scope: actilink
+
+  prod:
+    exec: flutter run --flavor production --target lib/main_production.dart
+    packageFilters:
+      scope: actilink
+      
+command:
+  clean:
+    hooks:
+      post: melos exec --flutter --concurrency=3 -- "flutter clean"
+

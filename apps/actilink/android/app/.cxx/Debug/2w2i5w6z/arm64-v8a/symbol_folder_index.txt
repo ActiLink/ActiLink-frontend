@@ -1,0 +1,1 @@
+/home/f1r3d3v/dev/uni/ActiLink/ActiLink-frontend/apps/actilink/build/app/intermediates/cxx/Debug/2w2i5w6z/obj/arm64-v8a
