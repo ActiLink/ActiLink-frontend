@@ -1,7 +1,11 @@
 {
     "@@locale": "en",
-    "counterAppBarTitle": "Counter",
-    "@counterAppBarTitle": {
-        "description": "Text shown in the AppBar of the Counter Page"
+    "appBarTitle": "Welcome to the ActiLink App",
+    "@appBarTitle": {
+        "description": "Text shown in the AppBar"
+    },
+    "helloFlutter": "Hello Flutter!",
+    "@helloFlutter": {
+        "description": "Welcome text"
     }
 }

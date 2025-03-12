@@ -1,0 +1,12 @@
+{
+    "@@locale": "pl",
+    "appBarTitle": "Witaj w aplikacji ActiLink",
+    "@appBarTitle": {
+        "description": "Tytuł paska aplikacji"
+    },
+    "helloFlutter": "Witaj Flutter!",
+    "@helloFlutter": {
+        "description": "Tekst powitalny"
+    }
+}
+

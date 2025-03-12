@@ -1,12 +1,12 @@
 import 'package:actilink/app/app.dart';
-import 'package:actilink/counter/counter.dart';
+import 'package:actilink/empty/empty.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('App', () {
-    testWidgets('renders CounterPage', (tester) async {
+    testWidgets('Renders EmptyPage', (tester) async {
       await tester.pumpWidget(const App());
-      expect(find.byType(CounterPage), findsOneWidget);
+      expect(find.byType(EmptyPage), findsOneWidget);
     });
   });
 }

@@ -9,5 +9,8 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get counterAppBarTitle => 'Counter';
+  String get appBarTitle => 'Welcome to the ActiLink App';
+
+  @override
+  String get helloFlutter => 'Hello Flutter!';
 }
