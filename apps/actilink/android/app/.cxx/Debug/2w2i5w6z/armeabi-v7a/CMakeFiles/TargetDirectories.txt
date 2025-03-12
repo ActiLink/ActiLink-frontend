@@ -1,2 +1,0 @@
-/home/f1r3d3v/dev/uni/ActiLink/ActiLink-frontend/apps/actilink/android/app/.cxx/Debug/2w2i5w6z/armeabi-v7a/CMakeFiles/edit_cache.dir
-/home/f1r3d3v/dev/uni/ActiLink/ActiLink-frontend/apps/actilink/android/app/.cxx/Debug/2w2i5w6z/armeabi-v7a/CMakeFiles/rebuild_cache.dir
