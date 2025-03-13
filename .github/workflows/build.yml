@@ -23,7 +23,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ActiLink-Apk
-        path: build/app/outputs/flutter-apk/app-development-release.apk
+        path: apps/actilink/build/app/outputs/flutter-apk/app-development-release.apk
         if-no-files-found: error
 
     - name: Build Android App Bundle
@@ -32,5 +32,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ActiLink-AppBundle
-        path: build/app/outputs/bundle/developmentRelease/app-development-release.aab
+        path: apps/actilink/build/app/outputs/bundle/developmentRelease/app-development-release.aab
         if-no-files-found: error
