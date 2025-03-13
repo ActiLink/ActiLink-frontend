@@ -1,0 +1,36 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  flutter_lint:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_env
+
+      - name: Verify formatting and analyze
+        run: melos run lint
+
+
+  flutter_test:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    name: Test
+    needs: flutter_lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_env
+
+      - name: Run tests
+        run: melos run test

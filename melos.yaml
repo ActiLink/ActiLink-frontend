@@ -1,15 +1,40 @@
 name: actilink
 
 packages:
-  - packages/*
   - apps/*
+  - packages/*
     
 scripts:
-  analyze:
-    exec: dart analyze .
+  lint:
+    steps:
+      - melos exec -- "dart format --output=none --set-exit-if-changed ."
+      - melos exec -- "flutter analyze --fatal-warnings"
+    
+  dart:test:
+    run: dart test
+    exec:
+      concurrency: 1
+    packageFilters:
+      flutter: false
+      
+  flutter:test:
+    run: flutter test
+    exec:
+      concurrency: 1
+    packageFilters:
+      flutter: true
+      
+  test:
+    steps:
+      - melos run dart:test
+      - melos run flutter:test
 
   generate:
-    run: melos exec -c 1 --depends-on build_runner -- dart run build_runner build
+    run: dart run build_runner build
+    exec:
+      concurrency: 1
+    packageFilters:
+      dependsOn: [build_runner, freezed]
 
   dev:
     exec: flutter run --flavor development --target lib/main_development.dart
@@ -23,6 +48,16 @@ scripts:
 
   prod:
     exec: flutter run --flavor production --target lib/main_production.dart
+    packageFilters:
+      scope: actilink
+
+  build:android:apk:
+    exec: flutter build apk --flavor development --target lib/main_development.dart
+    packageFilters:
+      scope: actilink
+
+  build:android:bundle:
+    exec: flutter build appbundle --flavor development --target lib/main_development.dart
     packageFilters:
       scope: actilink
       
