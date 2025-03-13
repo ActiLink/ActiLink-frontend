@@ -23,7 +23,3 @@ runs:
 
     - name: Install Melos
       uses: bluefireteam/melos-action@v3
-
-    - name: Install dependencies and link packages
-      run: melos bootstrap
-      shell: bash
