@@ -1,0 +1,38 @@
+name: Build
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  flutter_build_android:
+    name: Build Android
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Prepare environment
+      uses: ./.github/actions/prepare_env
+
+    - name: Build Android APK
+      run: melos run build:android:apk
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ActiLink-Apk
+        path: apps/actilink/build/app/outputs/flutter-apk/app-development-release.apk
+        if-no-files-found: error
+
+    - name: Build Android App Bundle
+      run: melos run build:android:bundle
+    - name: Upload Bundle Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ActiLink-AppBundle
+        path: apps/actilink/build/app/outputs/bundle/developmentRelease/app-development-release.aab
+        if-no-files-found: error
