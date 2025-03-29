@@ -5,7 +5,7 @@ class AppTextStyles {
   /// Large display text style, used for titles/bigger headlines
   static const TextStyle displayLarge = TextStyle(
     fontFamily: 'Poppins',
-    fontSize: 40,
+    fontSize: 32,
     fontWeight: FontWeight.w900,
     letterSpacing: 0.02,
     height: 0.9,

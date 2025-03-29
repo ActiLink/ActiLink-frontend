@@ -2,58 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/theme/app_colors.dart';
 import 'package:ui/src/theme/text_styles.dart';
 
-class AppTextField extends StatelessWidget { // <-- Added suffixIcon
-
+/// A custom text field widget that supports various configurations such as
+/// labels, hint text, input validation, password masking, and more.
+class AppTextField extends StatelessWidget {
+  /// Creates an [AppTextField].
+  ///
+  /// The [label] is the text displayed above the text field,
+  /// [hintText] is the placeholder text shown inside the field,
+  /// [controller] is the optional controller for the text field,
+  /// [obscureText] determines if the text should be obscured (for password),
+  /// [keyboardType] defines the type of keyboard (e.g., text, number),
+  /// [validator] is used for form validation,
+  /// [onChanged] is a callback for when the text field value changes,
+  /// and [suffixIcon] is an optional widget displayed at the end of text field.
   const AppTextField({
-    required this.label, required this.hintText, super.key,
+    required this.label,
+    required this.hintText,
+    super.key,
     this.controller,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
-    this.validator, // <-- Validator parameter
-    this.onChanged, // <-- onChanged parameter
-    this.suffixIcon, // <-- SuffixIcon parameter
+    this.validator,
+    this.onChanged,
+    this.suffixIcon,
   });
+
+  /// The label text that appears above the text field.
   final String label;
+
+  /// The hint text that appears inside the text field as a placeholder.
   final String hintText;
+
+  /// The controller that manages the text input.
   final TextEditingController? controller;
+
+  /// Determines whether the text should be obscured (typically for password).
   final bool obscureText;
+
+  /// Defines the type of keyboard to display (e.g., text, number, email).
   final TextInputType keyboardType;
-  final String? Function(String?)? validator; // <-- Added validator
-  final ValueChanged<String>? onChanged; // <-- Added onChanged
+
+  /// A function to validate the text field input.
+  final String? Function(String?)? validator;
+
+  /// A callback function that triggers when the text field value changes.
+  final ValueChanged<String>? onChanged;
+
+  /// An optional widget (e.g., icon) displayed at the end of the text field.
   final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.black),
-        ),
-        const SizedBox(height: 4),
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          validator: validator, // <-- Apply validator
-          onChanged: onChanged, // <-- Apply onChanged
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle:
-                AppTextStyles.bodyMedium.copyWith(color: AppColors.accent),
-            filled: true,
-            fillColor: AppColors.secondary,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            suffixIcon: suffixIcon, // <-- Apply suffixIcon here
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Display label
+          Text(
+            label,
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.black),
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+
+          // The actual text field
+          TextFormField(
+            controller: controller,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            validator: validator, // Apply validator function
+            onChanged: onChanged, // Apply onChanged function
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle:
+                  AppTextStyles.bodyMedium.copyWith(color: AppColors.accent),
+              filled: true,
+              fillColor: AppColors.secondary,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              suffixIcon: suffixIcon, // Apply suffixIcon here
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
