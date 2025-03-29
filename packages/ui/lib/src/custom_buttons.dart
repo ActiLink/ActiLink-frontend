@@ -5,18 +5,16 @@ import 'package:ui/src/theme/text_styles.dart';
 enum ButtonType { primary, secondary, text } // Added text button type
 
 class AppButton extends StatelessWidget {
+
+  const AppButton({
+    required this.text, required this.onPressed, super.key,
+    this.type = ButtonType.primary,
+    this.label,
+  });
   final String text;
   final VoidCallback onPressed;
   final ButtonType type;
   final String? label;
-
-  const AppButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-    this.type = ButtonType.primary,
-    this.label,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +31,7 @@ class AppButton extends StatelessWidget {
       );
     }
 
-    final Color backgroundColor =
+    final backgroundColor =
         (type == ButtonType.primary) ? AppColors.primary : AppColors.secondary;
 
     return ElevatedButton(

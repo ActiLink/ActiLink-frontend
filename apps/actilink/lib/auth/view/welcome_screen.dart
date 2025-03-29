@@ -1,33 +1,33 @@
-import 'package:actilink/login/view/login_page.dart';
-import 'package:actilink/login/view/register_page.dart';
+import 'package:actilink/auth/view/login_modal.dart';
+import 'package:actilink/auth/view/register_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui/ui.dart';
 
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+void showCustomBottomSheet(BuildContext context, Widget screen) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.6,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) {
+          return screen;
+        },
+      );
+    },
+  );
+}
 
-  void showBottomSheet(BuildContext context, Widget screen) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          minChildSize: 0.6,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return screen;
-          },
-        );
-      },
-    );
-  }
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +65,15 @@ class WelcomePage extends StatelessWidget {
               Column(
                 children: [
                   AppButton(
-                    text: "Get started",
+                    text: 'Get started',
                     onPressed: () =>
-                        showBottomSheet(context, const RegisterScreen()),
+                        showCustomBottomSheet(context, const RegisterModal()),
                   ),
                   const SizedBox(height: 18),
                   AppButton(
-                    text: "I already have an account",
+                    text: 'I already have an account',
                     onPressed: () =>
-                        showBottomSheet(context, const LoginScreen()),
+                        showCustomBottomSheet(context, const LoginModal()),
                     type: ButtonType.secondary,
                   ),
                 ],

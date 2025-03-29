@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/theme/app_colors.dart';
 import 'package:ui/src/theme/text_styles.dart';
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatelessWidget { // <-- Added suffixIcon
+
+  const AppTextField({
+    required this.label, required this.hintText, super.key,
+    this.controller,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.text,
+    this.validator, // <-- Validator parameter
+    this.onChanged, // <-- onChanged parameter
+    this.suffixIcon, // <-- SuffixIcon parameter
+  });
   final String label;
   final String hintText;
   final TextEditingController? controller;
   final bool obscureText;
   final TextInputType keyboardType;
-
-  const AppTextField({
-    Key? key,
-    required this.label,
-    required this.hintText,
-    this.controller,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.text,
-  }) : super(key: key);
+  final String? Function(String?)? validator; // <-- Added validator
+  final ValueChanged<String>? onChanged; // <-- Added onChanged
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +32,12 @@ class AppTextField extends StatelessWidget {
           style: AppTextStyles.bodySmall.copyWith(color: AppColors.black),
         ),
         const SizedBox(height: 4),
-        TextField(
+        TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          validator: validator, // <-- Apply validator
+          onChanged: onChanged, // <-- Apply onChanged
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle:
@@ -44,6 +50,7 @@ class AppTextField extends StatelessWidget {
             ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            suffixIcon: suffixIcon, // <-- Apply suffixIcon here
           ),
         ),
       ],
