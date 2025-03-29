@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/theme/app_colors.dart';
 import 'package:ui/src/theme/text_styles.dart';
 
-enum ButtonType { primary, secondary }
+enum ButtonType { primary, secondary, text } // Added text button type
 
 class AppButton extends StatelessWidget {
   final String text;
@@ -20,36 +20,38 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color backgroundColor;
-    switch (type) {
-      case ButtonType.primary:
-        backgroundColor = AppColors.primary;
-        break;
-      case ButtonType.secondary:
-        backgroundColor = AppColors.secondary;
-        break;
+    if (type == ButtonType.text) {
+      return TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        child: Text(
+          text,
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
+        ),
+      );
     }
 
-    return Column(
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            fixedSize: const Size(230, 50),
-            backgroundColor: backgroundColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-          ),
-          onPressed: onPressed,
-          child: Text(
-            text,
-            style: type == ButtonType.secondary
-                ? AppTextStyles.bodyMedium.copyWith(color: AppColors.black)
-                : AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
-          ),
+    final Color backgroundColor =
+        (type == ButtonType.primary) ? AppColors.primary : AppColors.secondary;
+
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        fixedSize: const Size(300, 50),
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: type == ButtonType.secondary
+            ? AppTextStyles.bodyMedium.copyWith(color: AppColors.black)
+            : AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
+      ),
     );
   }
 }
