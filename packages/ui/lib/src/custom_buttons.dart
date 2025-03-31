@@ -14,7 +14,8 @@ enum ButtonType {
   text
 }
 
-/// A custom button widget used throughout the app, which supports different button types and styles.
+/// A custom button widget used throughout the app, which supports
+/// different button types and styles.
 class AppButton extends StatelessWidget {
   /// Creates an [AppButton].
   ///

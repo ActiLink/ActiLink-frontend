@@ -1,5 +1,6 @@
-import 'package:actilink/auth/view/welcome_screen.dart';
+import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui/ui.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -90,14 +91,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WelcomeScreen(),
-                  ),
-                );
-              },
+              onPressed: context.read<AuthCubit>().logout,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary.withValues(alpha: 0.8),
                 shape: RoundedRectangleBorder(
