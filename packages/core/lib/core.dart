@@ -2,4 +2,6 @@
 library;
 
 export 'src/core.dart';
-export 'src/repositories/weather_repository.dart';
+export 'src/models.dart';
+export 'src/repositories.dart';
+export 'src/services.dart';

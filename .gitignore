@@ -103,6 +103,13 @@ app.*.map.json
 # Environment configuration
 *.env
 
+# Generated l10n
+apps/actilink/lib/l10n/gen_l10n/
+
+# Generated files
+*.g.dart 
+*.freezed.dart
+
 # Exceptions to the above rules.
 !**/ios/**/default.mode1v3
 !**/ios/**/default.mode2v3

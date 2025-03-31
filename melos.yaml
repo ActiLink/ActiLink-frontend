@@ -6,9 +6,7 @@ packages:
     
 scripts:
   lint:
-    steps:
-      - melos exec -- "dart format --output=none --set-exit-if-changed ."
-      - melos exec -- "flutter analyze --fatal-warnings"
+    run: melos format --set-exit-if-changed && melos analyze --fatal-warnings
     
   dart:test:
     run: dart test
@@ -25,9 +23,7 @@ scripts:
       flutter: true
       
   test:
-    steps:
-      - melos run dart:test
-      - melos run flutter:test
+    run: melos run dart:test && melos run flutter:test
 
   generate:
     run: dart run build_runner build
