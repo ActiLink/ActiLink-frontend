@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:ui/ui.dart';
 
 void showCustomBottomSheet(BuildContext context, Widget screen) {
-  showModalBottomSheet(
+  showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.white,

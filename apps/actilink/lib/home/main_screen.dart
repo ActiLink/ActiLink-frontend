@@ -23,7 +23,7 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const HomeScreen(),
     const HomeScreen(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -56,13 +56,19 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: AppColors.secondary,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded), label: 'Home'),
+            icon: Icon(Icons.home_rounded),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.event_rounded), label: 'Events'),
+            icon: Icon(Icons.event_rounded),
+            label: 'Events',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.add_rounded), label: 'Post'),
           BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Map'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded), label: 'Profile'),
+            icon: Icon(Icons.person_rounded),
+            label: 'Profile',
+          ),
         ],
       ),
     );
