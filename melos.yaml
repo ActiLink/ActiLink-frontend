@@ -23,9 +23,7 @@ scripts:
       flutter: true
       
   test:
-    steps:
-      - melos run dart:test
-      - melos run flutter:test
+    run: melos run dart:test && melos run flutter:test
 
   generate:
     run: dart run build_runner build
