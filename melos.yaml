@@ -6,9 +6,7 @@ packages:
     
 scripts:
   lint:
-    steps:
-      - melos exec -- "dart format --output=none --set-exit-if-changed ."
-      - melos exec -- "flutter analyze --fatal-warnings"
+    run: melos format --set-exit-if-changed && melos analyze --fatal-warnings
     
   dart:test:
     run: dart test
