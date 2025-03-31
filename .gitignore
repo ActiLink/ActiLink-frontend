@@ -104,7 +104,7 @@ app.*.map.json
 *.env
 
 # Generated l10n
-apps/actilink/lib/l10n/gen_l10n
+apps/actilink/lib/l10n/gen_l10n/
 
 # Generated files
 *.g.dart 
