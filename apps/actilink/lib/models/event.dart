@@ -1,17 +1,4 @@
 class Event {
-  final int eventId;
-  final int organizerId;
-  final DateTime startTime;
-  final DateTime endTime;
-  final String? venue;
-  final String? location;
-  final double price;
-  final int maxUsers;
-  final int minUsers;
-  final String? description;
-  final String? user;
-  final String? title;
-  final List<String> relatedHobbies;
 
   Event({
     required this.eventId,
@@ -24,9 +11,8 @@ class Event {
     required this.minUsers,
     required this.description,
     required this.user,
-    this.venue,
+    required this.relatedHobbies, this.venue,
     this.location,
-    required this.relatedHobbies,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -46,4 +32,17 @@ class Event {
       relatedHobbies: json['relatedHobbies'] as List<String>,
     );
   }
+  final int eventId;
+  final int organizerId;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String? venue;
+  final String? location;
+  final double price;
+  final int maxUsers;
+  final int minUsers;
+  final String? description;
+  final String? user;
+  final String? title;
+  final List<String> relatedHobbies;
 }
