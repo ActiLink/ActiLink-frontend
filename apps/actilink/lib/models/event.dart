@@ -1,5 +1,4 @@
 class Event {
-
   Event({
     required this.eventId,
     required this.title,
@@ -11,7 +10,8 @@ class Event {
     required this.minUsers,
     required this.description,
     required this.user,
-    required this.relatedHobbies, this.venue,
+    required this.relatedHobbies,
+    this.venue,
     this.location,
   });
 

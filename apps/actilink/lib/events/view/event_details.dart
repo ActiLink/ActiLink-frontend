@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
 class EventDetailsScreen extends StatelessWidget {
-
   const EventDetailsScreen({required this.event, super.key});
   final Event event;
 
@@ -56,16 +55,28 @@ class EventDetailsScreen extends StatelessWidget {
               // Info Card
               _infoCard([
                 _infoRow(
-                    Icons.schedule, 'Start', _formatDateTime(event.startTime),),
+                  Icons.schedule,
+                  'Start',
+                  _formatDateTime(event.startTime),
+                ),
                 _infoRow(Icons.event, 'End', _formatDateTime(event.endTime)),
                 _infoRow(
-                    Icons.place, 'Location', event.location ?? 'No location',),
+                  Icons.place,
+                  'Location',
+                  event.location ?? 'No location',
+                ),
                 if (event.venue != null)
                   _infoRow(Icons.location_city, 'Venue', event.venue!),
-                _infoRow(Icons.price_change, 'Price',
-                    '\$${event.price.toStringAsFixed(2)}',),
-                _infoRow(Icons.people, 'Users',
-                    '${event.minUsers} - ${event.maxUsers}',),
+                _infoRow(
+                  Icons.price_change,
+                  'Price',
+                  '\$${event.price.toStringAsFixed(2)}',
+                ),
+                _infoRow(
+                  Icons.people,
+                  'Users',
+                  '${event.minUsers} - ${event.maxUsers}',
+                ),
               ]),
 
               const SizedBox(height: 24),
