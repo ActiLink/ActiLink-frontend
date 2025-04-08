@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
 class EventCard extends StatelessWidget {
-
   const EventCard({required this.event, super.key});
   final Event event;
 
@@ -20,7 +19,7 @@ class EventCard extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
+            MaterialPageRoute<Widget>(
               builder: (context) => EventDetailsScreen(event: event),
             ),
           );
