@@ -77,7 +77,7 @@ class AppTextField extends StatelessWidget {
               hintStyle:
                   AppTextStyles.bodyMedium.copyWith(color: AppColors.accent),
               filled: true,
-              fillColor: AppColors.secondary,
+              fillColor: AppColors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide.none,

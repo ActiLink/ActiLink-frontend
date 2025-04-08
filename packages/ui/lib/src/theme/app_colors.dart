@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
-/// A class that holds the color palette for the application.
+/// Harmonized, semantic color palette for the app.
 class AppColors {
-  /// The primary color used in the application.
-  /// A shade of purple.
-  static const Color primary = Color.fromARGB(255, 100, 56, 203);
+  // === Brand Colors ===
+  static const Color brand = Color(0xFF6438CB); // Primary purple
+  static const Color accent = Color(0xFF9A98EB); // Soft purple highlight
+  static const Color highlight = Color(0xFFECF994); // CTA yellow
 
-  /// The secondary color used in the application.
-  /// A light gray color for backgrounds or neutral elements.
-  static const Color secondary = Color.fromARGB(255, 243, 243, 243);
+  // === UI Base ===
+  static const Color background =
+      Color(0xFFF5F4FA); // Soft off-white with purple tint
+  static const Color surface = Color(0xFFFFFFFF); // White cards, modals, sheets
+  static const Color border =
+      Color(0xFFE2E0F0); // Very light purple-grey for outlines
 
-  /// The accent color used for emphasis or highlights.
-  /// A soft purple color.
-  static const Color accent = Color(0xFF9A98EB);
+  // === Text ===
+  static const Color textPrimary = Color(0xFF2A1A5E); // Deep purple-black
+  static const Color textSecondary = Color(0xFF5E4B9A); // Muted purple
+  static const Color textDisabled =
+      Color(0xFFB5AED7); // Faded lavender for hint/disabled
 
-  /// A highlight color for call-to-action elements or important information.
-  /// A light yellow shade.
-  static const Color highlight = Color(0xFFECF994);
+  // === Status Colors (Purple-toned versions) ===
+  static const Color success =
+      Color(0xFF6DD3B3); // Minty green (less aggressive)
+  static const Color warning = Color(0xFFF2E16A); // Soft warm yellow
+  static const Color error = Color(0xFFD77A89); // Muted rose
+  static const Color info = Color(0xFF8E9AE6); // Soft bluish purple
 
-  /// A white color used for text or background elements.
+  // === Utility ===
   static const Color white = Colors.white;
-
-  /// A black color used for text.
-  static const Color black = Color.fromARGB(255, 0, 0, 0);
+  static const Color black = Colors.black;
 }

@@ -54,15 +54,14 @@ class AppButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.brand),
         ),
       );
     }
 
     // Default background color based on button type (primary or secondary)
-    final backgroundColor = (type == ButtonType.primary)
-        ? AppColors.highlight
-        : AppColors.secondary;
+    final backgroundColor =
+        (type == ButtonType.primary) ? AppColors.highlight : AppColors.white;
 
     // Returns an elevated button with custom styling
     return ElevatedButton(

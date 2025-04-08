@@ -36,7 +36,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary, Color.fromARGB(255, 149, 118, 221)],
+            colors: [AppColors.brand, Color.fromARGB(255, 149, 118, 221)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

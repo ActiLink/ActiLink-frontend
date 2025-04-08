@@ -9,7 +9,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.secondary,
+      backgroundColor: AppColors.white,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -35,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.brand,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -69,8 +69,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     color: AppColors.white,
                     child: ListTile(
-                      leading:
-                          const Icon(Icons.event, color: AppColors.primary),
+                      leading: const Icon(Icons.event, color: AppColors.brand),
                       title: Text(
                         'Event ${index + 1}',
                         style: AppTextStyles.bodyMedium,
@@ -93,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: context.read<AuthCubit>().logout,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary.withValues(alpha: 0.8),
+                backgroundColor: AppColors.brand.withValues(alpha: 0.8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
