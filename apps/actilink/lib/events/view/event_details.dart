@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:actilink/models/event.dart';
+import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
 class EventDetailsScreen extends StatelessWidget {
-  final Event event;
 
-  const EventDetailsScreen({Key? key, required this.event}) : super(key: key);
+  const EventDetailsScreen({required this.event, super.key});
+  final Event event;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,6 @@ class EventDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -57,16 +56,16 @@ class EventDetailsScreen extends StatelessWidget {
               // Info Card
               _infoCard([
                 _infoRow(
-                    Icons.schedule, 'Start', _formatDateTime(event.startTime)),
+                    Icons.schedule, 'Start', _formatDateTime(event.startTime),),
                 _infoRow(Icons.event, 'End', _formatDateTime(event.endTime)),
                 _infoRow(
-                    Icons.place, 'Location', event.location ?? 'No location'),
+                    Icons.place, 'Location', event.location ?? 'No location',),
                 if (event.venue != null)
                   _infoRow(Icons.location_city, 'Venue', event.venue!),
                 _infoRow(Icons.price_change, 'Price',
-                    '\$${event.price.toStringAsFixed(2)}'),
+                    '\$${event.price.toStringAsFixed(2)}',),
                 _infoRow(Icons.people, 'Users',
-                    '${event.minUsers} - ${event.maxUsers}'),
+                    '${event.minUsers} - ${event.maxUsers}',),
               ]),
 
               const SizedBox(height: 24),
@@ -145,7 +144,7 @@ class EventDetailsScreen extends StatelessWidget {
 
   Widget _infoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Icon(icon, size: 20, color: AppColors.brand),

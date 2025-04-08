@@ -66,9 +66,9 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Events',
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.add_rounded), label: 'Post'),
+                icon: Icon(Icons.add_rounded), label: 'Post',),
             BottomNavigationBarItem(
-                icon: Icon(Icons.map_rounded), label: 'Map'),
+                icon: Icon(Icons.map_rounded), label: 'Map',),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),
               label: 'Profile',

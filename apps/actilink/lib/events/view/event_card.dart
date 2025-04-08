@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
 class EventCard extends StatelessWidget {
-  final Event event;
 
-  const EventCard({super.key, required this.event});
+  const EventCard({required this.event, super.key});
+  final Event event;
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +51,14 @@ class EventCard extends StatelessWidget {
               // Info rows
               Row(
                 children: [
-                  Icon(Icons.place, size: 16, color: AppColors.brand),
+                  const Icon(Icons.place, size: 16, color: AppColors.brand),
                   const SizedBox(width: 6),
                   Text(
                     event.location ?? 'No location',
                     style: AppTextStyles.bodySmall,
                   ),
                   const Spacer(),
-                  Icon(Icons.schedule, size: 16, color: AppColors.brand),
+                  const Icon(Icons.schedule, size: 16, color: AppColors.brand),
                   const SizedBox(width: 6),
                   Text(
                     _formatTime(event.startTime),
@@ -70,8 +70,7 @@ class EventCard extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Hobby chips
-              if (event.relatedHobbies != null &&
-                  event.relatedHobbies!.isNotEmpty)
+              if (event.relatedHobbies.isNotEmpty)
                 Wrap(
                   spacing: 8,
                   runSpacing: 6,
