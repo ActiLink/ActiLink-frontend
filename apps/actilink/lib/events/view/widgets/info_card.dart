@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
 class InfoCard extends StatelessWidget {
-  final List<Widget> children;
-
   const InfoCard({required this.children, super.key});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {

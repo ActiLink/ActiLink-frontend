@@ -1,5 +1,5 @@
 import 'package:actilink/events/events_data.dart';
-import 'package:actilink/events/view/event_card.dart';
+import 'package:actilink/events/view/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
 
