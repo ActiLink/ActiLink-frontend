@@ -24,6 +24,8 @@ class AuthService {
 
   Stream<User?> get userStream => _userStreamController.stream;
 
+  Future<User?> get currentUser => _userRepository.getSavedUser();
+
   User? _getUserFromToken(String token) {
     try {
       final decodedToken = JwtDecoder.decode(token);

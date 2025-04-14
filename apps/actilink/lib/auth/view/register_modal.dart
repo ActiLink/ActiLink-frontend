@@ -231,12 +231,8 @@ class _RegisterModalState extends State<RegisterModal> {
     }
     // RegExp for non-alphanumeric character (symbol)
     // This matches common symbols like !@#$%^&*()_+-=[]{};':"\|,.<>/?~`
-    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      // Simplified common symbols check. Adjust regex if specific symbols are needed/excluded.
-      // Alternatively, you can check for absence of only letters and numbers:
-      // if (RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+    if (!RegExp(r'[^a-zA-Z\d\s:]').hasMatch(value)) {
       return 'Password must contain a non-alphanumeric character.';
-      // }
     }
     // All checks passed
     return null;

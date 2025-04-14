@@ -6,5 +6,4 @@ docker compose \
     -f "$BACKEND_PATH/docker-compose.yml" \
     -f "$BACKEND_PATH/docker-compose.override.yml" \
     -f "$BACKEND_PATH/docker-compose.linux.yml" \
-    -f "$BACKEND_PATH/docker-compose.migrate.yml" \
     up $@

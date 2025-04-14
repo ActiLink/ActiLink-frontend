@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:dio/dio.dart';
 part 'package:core/src/services/api/api_exceptions.dart';
 
@@ -15,6 +16,12 @@ class ApiService {
   }
 
   late final Dio _dio;
+
+  void addInterceptor(Interceptor interceptor) {
+    if (!_dio.interceptors.contains(interceptor)) {
+      _dio.interceptors.add(interceptor);
+    }
+  }
 
   Future<dynamic> getData(String endpoint) async {
     try {
@@ -36,6 +43,32 @@ class ApiService {
       throw _handleDioError(e, 'POST', endpoint);
     } catch (e) {
       log('Unexpected Error POST $endpoint: $e');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  Future<dynamic> putData(String endpoint, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.put<dynamic>(endpoint, data: data);
+      return response.data;
+    } on DioException catch (e) {
+      throw _handleDioError(e, 'PUT', endpoint);
+    } catch (e) {
+      log('Unexpected Error PUT $endpoint: $e');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  Future<void> deleteData(String endpoint) async {
+    try {
+      await _dio.delete<dynamic>(endpoint);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == HttpStatus.noContent) {
+        return;
+      }
+      throw _handleDioError(e, 'DELETE', endpoint);
+    } catch (e) {
+      log('Unexpected Error DELETE $endpoint: $e');
       throw Exception('An unexpected error occurred: $e');
     }
   }
