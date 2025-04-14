@@ -33,27 +33,27 @@ scripts:
       dependsOn: [build_runner, freezed]
 
   dev:
-    exec: flutter run --flavor development --target lib/main_development.dart
+    exec: flutter run --dart-define-from-file=.env --flavor development --target lib/main_development.dart
     packageFilters:
       scope: actilink
 
   stage:
-    exec: flutter run --flavor staging --target lib/main_staging.dart
+    exec: flutter run --dart-define-from-file=.env --flavor staging --target lib/main_staging.dart
     packageFilters:
       scope: actilink
 
   prod:
-    exec: flutter run --flavor production --target lib/main_production.dart
+    exec: flutter run --dart-define-from-file=.env --flavor production --target lib/main_production.dart
     packageFilters:
       scope: actilink
 
   build:android:apk:
-    exec: flutter build apk --flavor development --target lib/main_development.dart
+    exec: flutter build apk --dart-define-from-file=.env --flavor development --target lib/main_development.dart
     packageFilters:
       scope: actilink
 
   build:android:bundle:
-    exec: flutter build appbundle --flavor development --target lib/main_development.dart
+    exec: flutter build appbundle --dart-define-from-file=.env --flavor development --target lib/main_development.dart
     packageFilters:
       scope: actilink
       

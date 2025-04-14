@@ -14,7 +14,8 @@ class AppTextField extends StatelessWidget {
   /// [keyboardType] defines the type of keyboard (e.g., text, number),
   /// [validator] is used for form validation,
   /// [onChanged] is a callback for when the text field value changes,
-  /// and [suffixIcon] is an optional widget displayed at the end of text field.
+  /// [suffixIcon] is an optional widget displayed at the end of text field,
+  /// [multiline] determines if the text field should support multiple lines.
   const AppTextField({
     required this.label,
     required this.hintText,
@@ -25,6 +26,7 @@ class AppTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.suffixIcon,
+    this.multiline = false,
   });
 
   /// The label text that appears above the text field.
@@ -51,6 +53,9 @@ class AppTextField extends StatelessWidget {
   /// An optional widget (e.g., icon) displayed at the end of the text field.
   final Widget? suffixIcon;
 
+  /// Determines whether the text field should support multiple lines of text.
+  final bool multiline;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -72,6 +77,8 @@ class AppTextField extends StatelessWidget {
             keyboardType: keyboardType,
             validator: validator, // Apply validator function
             onChanged: onChanged, // Apply onChanged function
+            maxLines: multiline ? null : 1,
+            minLines: multiline ? 3 : 1,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle:
