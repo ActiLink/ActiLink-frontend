@@ -1,24 +1,9 @@
 import 'package:actilink/events/view/events_screen.dart';
+import 'package:actilink/events/view/post_event_screen.dart';
 import 'package:actilink/home/home_screen.dart';
 import 'package:actilink/home/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/ui.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainScreen(),
-    );
-  }
-}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const EventsScreen(),
-    const HomeScreen(),
+    const PostEventScreen(),
     const HomeScreen(),
     const ProfileScreen(),
   ];

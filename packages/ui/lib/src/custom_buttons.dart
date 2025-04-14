@@ -22,14 +22,19 @@ class AppButton extends StatelessWidget {
   /// The [text] parameter is required to display the button label,
   /// the [onPressed] callback is required for the button action,
   /// the [type] determines the button style (defaults to [ButtonType.primary]),
-  /// and the [label] is an optional label text.
+  /// the [label] is an optional label text, and
+  /// the [child] is an widget that takes precedence over text if provided.
   const AppButton({
-    required this.text,
     required this.onPressed,
     super.key,
+    this.text = '',
     this.type = ButtonType.primary,
     this.label,
-  });
+    this.child,
+  }) : assert(
+          text != '' || child != null,
+          'Either text or child must be provided',
+        );
 
   /// The text to display on the button.
   final String text;
@@ -43,6 +48,9 @@ class AppButton extends StatelessWidget {
   /// An optional label to display, specific to the button style.
   final String? label;
 
+  /// An optional child widget to display instead of the text.
+  final Widget? child;
+
   @override
   Widget build(BuildContext context) {
     if (type == ButtonType.text) {
@@ -52,10 +60,11 @@ class AppButton extends StatelessWidget {
         style: TextButton.styleFrom(
           padding: EdgeInsets.zero,
         ),
-        child: Text(
-          text,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.brand),
-        ),
+        child: child ??
+            Text(
+              text,
+              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.brand),
+            ),
       );
     }
 
@@ -74,12 +83,13 @@ class AppButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
       ),
       onPressed: onPressed,
-      child: Text(
-        text,
-        style: type == ButtonType.secondary
-            ? AppTextStyles.bodyMedium.copyWith(color: AppColors.black)
-            : AppTextStyles.bodyMedium.copyWith(color: AppColors.black),
-      ),
+      child: child ??
+          Text(
+            text,
+            style: type == ButtonType.secondary
+                ? AppTextStyles.bodyMedium.copyWith(color: AppColors.black)
+                : AppTextStyles.bodyMedium.copyWith(color: AppColors.black),
+          ),
     );
   }
 }
