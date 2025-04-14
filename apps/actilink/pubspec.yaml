@@ -14,10 +14,12 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_google_maps_webservices: ^1.1.1
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^9.2.4
   flutter_svg: ^2.0.17
+  google_places_for_flutter_plus: ^2.0.1
   intl: ^0.19.0
   provider: ^6.1.4
   ui: ^0.1.0+1

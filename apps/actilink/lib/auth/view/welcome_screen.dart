@@ -47,7 +47,11 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SvgPicture.asset('assets/welcome.svg', width: 200, height: 200),
+                SvgPicture.asset(
+                  'assets/welcome.svg',
+                  width: 200,
+                  height: 200,
+                ),
                 Column(
                   children: [
                     Text(
@@ -74,8 +78,10 @@ class WelcomeScreen extends StatelessWidget {
                   children: [
                     AppButton(
                       text: 'Get started',
-                      onPressed: () =>
-                          showCustomBottomSheet(context, const RegisterModal()),
+                      onPressed: () => showCustomBottomSheet(
+                        context,
+                        const RegisterModal(),
+                      ),
                     ),
                     const SizedBox(height: 18),
                     AppButton(
