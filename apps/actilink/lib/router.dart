@@ -1,18 +1,40 @@
+import 'package:actilink/auth/logic/auth_cubit.dart';
+import 'package:actilink/auth/logic/auth_state.dart';
+import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/events/view/event_details.dart';
-import 'package:actilink/events/view/widgets/event_form.dart';
-import 'package:actilink/home/main_screen.dart';
-import 'package:core/core.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import 'package:actilink/home/home_screen.dart';
 import 'package:actilink/events/view/events_screen.dart';
 import 'package:actilink/events/view/post_event_screen.dart';
+import 'package:actilink/events/view/widgets/event_form.dart';
+import 'package:actilink/home/home_screen.dart';
+import 'package:actilink/home/main_shell.dart';
 import 'package:actilink/home/profile_screen.dart';
+import 'package:core/core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
+  redirect: (context, state) {
+    final authState = context.read<AuthCubit>().state;
+
+    final isLoggingIn = state.uri.path == '/welcome';
+    final isAuthenticated = authState is AuthAuthenticated;
+
+    if (!isAuthenticated && !isLoggingIn) {
+      return '/welcome';
+    }
+
+    if (isAuthenticated && isLoggingIn) {
+      return '/home';
+    }
+
+    return null;
+  },
   routes: [
+    GoRoute(
+      path: '/welcome',
+      builder: (context, state) => const WelcomeScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [
@@ -27,23 +49,17 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'details/:id',
               builder: (context, state) {
-                final id = state.pathParameters['id']!;
-                final event =
-                    state.extra as Event; // Upewnij się, że przekazujesz Event
+                final event = state.extra! as Event;
                 return EventDetailsScreen(event: event);
               },
             ),
             GoRoute(
               path: 'edit/:id',
               builder: (context, state) {
-                final eventId = state.pathParameters['id']; // id wydarzenia
-                final event =
-                    state.extra as Event?; // Przekazywany event, może być null
+                final event = state.extra as Event?;
                 return EventForm(
-                  event: event, // Przekazujemy event, jeśli istnieje
-                  onSubmit: (updatedEvent) {
-                    context.pop(updatedEvent); // Zwracamy zaktualizowany event
-                  },
+                  event: event,
+                  onSubmit: (updatedEvent) => context.pop(updatedEvent),
                 );
               },
             ),

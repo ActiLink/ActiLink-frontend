@@ -25,7 +25,7 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (context) => ApiService(baseUrl: 'http://192.168.1.129:7062/')
+          create: (context) => ApiService(baseUrl: 'http://10.0.2.2:7062/')
             ..addInterceptor(
               AuthInterceptor(
                 tokenRepository: context.read<AuthTokenRepository>(),
@@ -60,35 +60,36 @@ class App extends StatelessWidget {
         ),
       ],
       child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => AuthCubit(
-                authService: context.read<AuthService>(),
-              )..checkAuthStatus(),
+        providers: [
+          BlocProvider(
+            create: (context) => AuthCubit(
+              authService: context.read<AuthService>(),
+            )..checkAuthStatus(),
+          ),
+          BlocProvider(
+            create: (context) => EventsCubit(
+              eventRepository: context.read<EventRepository>(),
+            )..fetchEvents(),
+          ),
+          BlocProvider(
+            create: (context) => HobbiesCubit(
+              hobbyRepository: context.read<HobbyRepository>(),
+            )..fetchHobbies(),
+          ),
+        ],
+        child: MaterialApp.router(
+          routerConfig: appRouter,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             ),
-            BlocProvider(
-              create: (context) => EventsCubit(
-                eventRepository: context.read<EventRepository>(),
-              )..fetchEvents(),
-            ),
-            BlocProvider(
-              create: (context) => HobbiesCubit(
-                hobbyRepository: context.read<HobbyRepository>(),
-              )..fetchHobbies(),
-            ),
-          ],
-          child: MaterialApp.router(
-            routerConfig: appRouter,
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              appBarTheme: AppBarTheme(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              useMaterial3: true,
-            ),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-          )),
+            useMaterial3: true,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      ),
     );
   }
 }

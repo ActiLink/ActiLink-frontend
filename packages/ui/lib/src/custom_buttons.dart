@@ -4,14 +4,17 @@ import 'package:ui/src/theme/text_styles.dart';
 
 /// Enum to represent the type of button.
 enum ButtonType {
-  /// A primary button with the main color.
+  /// A primary button with the main highlight color.
   primary,
 
   /// A secondary button with a neutral color.
   secondary,
 
   /// A text button with no background, usually for simple actions.
-  text
+  text,
+
+  /// An accent button with a standout brand color.
+  accent,
 }
 
 /// A custom button widget used throughout the app, which supports
@@ -22,8 +25,8 @@ class AppButton extends StatelessWidget {
   /// The [text] parameter is required to display the button label,
   /// the [onPressed] callback is required for the button action,
   /// the [type] determines the button style (defaults to [ButtonType.primary]),
-  /// the [label] is an optional label text, and
-  /// the [child] is an widget that takes precedence over text if provided.
+  /// the [label] is an optional label text,
+  /// and the [child] is a widget that takes precedence over [text] if provided.
   const AppButton({
     required this.onPressed,
     super.key,
@@ -42,7 +45,7 @@ class AppButton extends StatelessWidget {
   /// The callback function that is triggered when the button is pressed.
   final VoidCallback onPressed;
 
-  /// The type of button (primary, secondary, or text).
+  /// The type of button (primary, secondary, text, or accent).
   final ButtonType type;
 
   /// An optional label to display, specific to the button style.
@@ -68,9 +71,21 @@ class AppButton extends StatelessWidget {
       );
     }
 
-    // Default background color based on button type (primary or secondary)
-    final backgroundColor =
-        (type == ButtonType.primary) ? AppColors.highlight : AppColors.white;
+    // Determine background color based on button type
+    final backgroundColor = switch (type) {
+      ButtonType.primary => AppColors.highlight,
+      ButtonType.secondary => AppColors.white,
+      ButtonType.accent => AppColors.accent,
+      _ => AppColors.highlight,
+    };
+
+    // Determine text color based on button type
+    final textColor = switch (type) {
+      ButtonType.primary => AppColors.black,
+      ButtonType.secondary => AppColors.black,
+      ButtonType.accent => AppColors.white,
+      _ => AppColors.black,
+    };
 
     // Returns an elevated button with custom styling
     return ElevatedButton(
@@ -86,9 +101,7 @@ class AppButton extends StatelessWidget {
       child: child ??
           Text(
             text,
-            style: type == ButtonType.secondary
-                ? AppTextStyles.bodyMedium.copyWith(color: AppColors.black)
-                : AppTextStyles.bodyMedium.copyWith(color: AppColors.black),
+            style: AppTextStyles.bodyMedium.copyWith(color: textColor),
           ),
     );
   }

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
-import 'package:actilink/events/view/edit_event_screen.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
 import 'package:core/core.dart'; // Includes models, services
