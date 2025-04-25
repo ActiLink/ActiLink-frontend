@@ -1,7 +1,6 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/login_modal.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +22,8 @@ class _RegisterModalState extends State<RegisterModal> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   String? errorMessage;
-  String? _taxId;
+  // ignore: unused_field
+  late String? _taxId;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,6 @@ class _RegisterModalState extends State<RegisterModal> {
                   ),
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 10),
                     Text(
@@ -96,7 +95,8 @@ class _RegisterModalState extends State<RegisterModal> {
                     AppTextField(
                       label: 'Email',
                       labelStyle: TextStyle(
-                          color: widget.isBusiness ? Colors.white : null),
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Enter your email',
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
@@ -115,7 +115,8 @@ class _RegisterModalState extends State<RegisterModal> {
                     AppTextField(
                       label: 'Username',
                       labelStyle: TextStyle(
-                          color: widget.isBusiness ? Colors.white : null),
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Choose a username',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -132,13 +133,13 @@ class _RegisterModalState extends State<RegisterModal> {
                       AppTextField(
                         label: 'Tax ID',
                         labelStyle: TextStyle(
-                            color: widget.isBusiness ? Colors.white : null),
+                          color: widget.isBusiness ? Colors.white : null,
+                        ),
                         hintText: 'Enter your business tax ID',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Tax ID is required for business accounts.';
                           }
-                          // Tu możesz dodać inne zasady walidacji
                           return null;
                         },
                         onChanged: (value) => _taxId = value,
@@ -150,7 +151,8 @@ class _RegisterModalState extends State<RegisterModal> {
                     AppTextField(
                       label: 'Password',
                       labelStyle: TextStyle(
-                          color: widget.isBusiness ? Colors.white : null),
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Enter your password',
                       obscureText: _obscurePassword,
                       validator: _validatePassword,
@@ -171,7 +173,8 @@ class _RegisterModalState extends State<RegisterModal> {
                     AppTextField(
                       label: 'Confirm Password',
                       labelStyle: TextStyle(
-                          color: widget.isBusiness ? Colors.white : null),
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Re-enter your password',
                       obscureText: _obscureConfirmPassword,
                       validator: (value) {
@@ -225,9 +228,12 @@ class _RegisterModalState extends State<RegisterModal> {
                                 const LoginModal(
                                   isBusiness: true,
                                 ),
-                                backgroundColor: AppColors.accent)
+                                backgroundColor: AppColors.accent,
+                              )
                             : showCustomBottomSheet(
-                                context, const LoginModal());
+                                context,
+                                const LoginModal(),
+                              );
                       }
                     });
                   },

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/theme/app_colors.dart';
 import 'package:ui/src/theme/text_styles.dart';
 
+/// A reusable text input field with customizable styling, validation.
+///
+/// This widget is used for user input such as forms or authentication screens.
+/// It supports features like label display, hint text, password obscuring.
+/// and suffix icons (e.g., for visibility toggling).
 class AppTextField extends StatelessWidget {
   /// Creates an [AppTextField].
   ///

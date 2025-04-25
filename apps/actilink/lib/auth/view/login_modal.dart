@@ -1,7 +1,6 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/register_modal.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,7 +57,6 @@ class _LoginModalState extends State<LoginModal> {
                   ),
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 10),
                     Text(
@@ -153,7 +151,7 @@ class _LoginModalState extends State<LoginModal> {
                                 ? showCustomBottomSheet(
                                     context,
                                     RegisterModal(
-                                        isBusiness: widget.isBusiness),
+                                        isBusiness: widget.isBusiness,),
                                     backgroundColor: AppColors.accent,
                                     initialSize: 0.95,
                                     maxSize: 0.98,
@@ -161,7 +159,7 @@ class _LoginModalState extends State<LoginModal> {
                                 : showCustomBottomSheet(
                                     context,
                                     RegisterModal(
-                                        isBusiness: widget.isBusiness),
+                                        isBusiness: widget.isBusiness,),
                                   );
                           }
                         });

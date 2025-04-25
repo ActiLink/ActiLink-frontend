@@ -1,11 +1,9 @@
 // lib/auth/view/select_user_type_modal.dart
+import 'package:actilink/auth/view/register_modal.dart';
 import 'package:actilink/auth/view/selet_user_type_modal_login.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:actilink/auth/view/register_modal.dart';
 import 'package:ui/ui.dart';
-import 'package:actilink/auth/view/login_modal.dart';
 
 class SelectUserTypeModalRegister extends StatelessWidget {
   const SelectUserTypeModalRegister({super.key});
@@ -35,7 +33,7 @@ class SelectUserTypeModalRegister extends StatelessWidget {
               showCustomBottomSheet(
                 context,
                 const RegisterModal(
-                  isBusiness: false,
+                  
                 ),
                 initialSize: 0.85,
                 maxSize: 0.9,

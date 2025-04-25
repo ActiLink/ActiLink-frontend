@@ -1,10 +1,8 @@
 // lib/auth/view/select_user_type_modal_login.dart
+import 'package:actilink/auth/view/login_modal.dart';
 import 'package:actilink/auth/view/select_user_type_modal_register.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:actilink/auth/view/login_modal.dart';
-import 'package:actilink/auth/view/register_modal.dart';
 import 'package:ui/ui.dart';
 
 class SelectUserTypeModalLogin extends StatelessWidget {
@@ -36,7 +34,7 @@ class SelectUserTypeModalLogin extends StatelessWidget {
               Navigator.pop(context);
               showCustomBottomSheet(
                 context,
-                const LoginModal(isBusiness: false),
+                const LoginModal(),
                 initialSize: 0.85,
                 maxSize: 0.9,
               );

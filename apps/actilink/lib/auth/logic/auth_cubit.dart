@@ -132,9 +132,9 @@ class AuthCubit extends Cubit<AuthState> {
       if (isClosed) return;
       emit(const AuthUnauthenticated(message: 'Successfully logged out.'));
 
-      context.go(
-        '/welcome',
-      );
+      if (context.mounted) {
+        context.go('/welcome');
+      }
     } catch (e) {
       log('AuthCubit: Logout failed unexpectedly: $e');
       if (isClosed) return;

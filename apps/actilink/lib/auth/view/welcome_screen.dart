@@ -1,8 +1,6 @@
-import 'package:actilink/auth/view/login_modal.dart';
-import 'package:actilink/auth/view/register_modal.dart';
+import 'package:actilink/auth/view/select_user_type_modal_register.dart';
 import 'package:actilink/auth/view/selet_user_type_modal_login.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
-import 'package:actilink/auth/view/select_user_type_modal_register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui/ui.dart';
@@ -68,7 +66,7 @@ class WelcomeScreen extends StatelessWidget {
                     AppButton(
                       text: 'I already have an account',
                       onPressed: () => showCustomBottomSheet(
-                          context, const SelectUserTypeModalLogin()),
+                          context, const SelectUserTypeModalLogin(),),
                       type: ButtonType.secondary,
                     ),
                   ],

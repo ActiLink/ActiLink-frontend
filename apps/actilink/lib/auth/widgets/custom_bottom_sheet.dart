@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-  final Widget child;
-  final double initialSize;
-  final double minSize;
-  final double maxSize;
-  final Color backgroundColor;
 
   const CustomBottomSheet({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.initialSize = 0.8,
     this.minSize = 0.6,
     this.maxSize = 0.95,
     this.backgroundColor = Colors.white,
   });
+  final Widget child;
+  final double initialSize;
+  final double minSize;
+  final double maxSize;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +54,11 @@ void showCustomBottomSheet(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => CustomBottomSheet(
-      child: screen,
       initialSize: initialSize,
       minSize: minSize,
       maxSize: maxSize,
       backgroundColor: backgroundColor,
+      child: screen,
     ),
   );
 }

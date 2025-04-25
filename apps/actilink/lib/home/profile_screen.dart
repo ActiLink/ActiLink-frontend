@@ -92,7 +92,8 @@ class ProfileScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 await context.read<AuthCubit>().logout(
-                    context,); // Dodajemy await, aby poczekać na zakończenie operacji
+                      context,
+                    );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.brand.withValues(alpha: 0.8),
