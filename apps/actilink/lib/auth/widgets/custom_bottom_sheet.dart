@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-
   const CustomBottomSheet({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.initialSize = 0.8,
     this.minSize = 0.6,
     this.maxSize = 0.95,

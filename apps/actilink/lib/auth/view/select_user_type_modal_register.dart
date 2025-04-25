@@ -32,9 +32,7 @@ class SelectUserTypeModalRegister extends StatelessWidget {
               Navigator.pop(context); // Close current modal
               showCustomBottomSheet(
                 context,
-                const RegisterModal(
-                  
-                ),
+                const RegisterModal(),
                 initialSize: 0.85,
                 maxSize: 0.9,
               );

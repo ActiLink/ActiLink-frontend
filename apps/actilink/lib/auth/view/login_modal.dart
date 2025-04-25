@@ -151,7 +151,8 @@ class _LoginModalState extends State<LoginModal> {
                                 ? showCustomBottomSheet(
                                     context,
                                     RegisterModal(
-                                        isBusiness: widget.isBusiness,),
+                                      isBusiness: widget.isBusiness,
+                                    ),
                                     backgroundColor: AppColors.accent,
                                     initialSize: 0.95,
                                     maxSize: 0.98,
@@ -159,7 +160,8 @@ class _LoginModalState extends State<LoginModal> {
                                 : showCustomBottomSheet(
                                     context,
                                     RegisterModal(
-                                        isBusiness: widget.isBusiness,),
+                                      isBusiness: widget.isBusiness,
+                                    ),
                                   );
                           }
                         });

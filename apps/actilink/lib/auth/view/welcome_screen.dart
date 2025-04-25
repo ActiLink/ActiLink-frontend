@@ -66,7 +66,9 @@ class WelcomeScreen extends StatelessWidget {
                     AppButton(
                       text: 'I already have an account',
                       onPressed: () => showCustomBottomSheet(
-                          context, const SelectUserTypeModalLogin(),),
+                        context,
+                        const SelectUserTypeModalLogin(),
+                      ),
                       type: ButtonType.secondary,
                     ),
                   ],

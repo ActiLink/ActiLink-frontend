@@ -34,13 +34,19 @@ class MainShell extends StatelessWidget {
         unselectedItemColor: AppColors.white,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded), label: 'Home',),
+            icon: Icon(Icons.home_rounded),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.event_rounded), label: 'Events',),
+            icon: Icon(Icons.event_rounded),
+            label: 'Events',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.add_rounded), label: 'Post'),
           BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Map'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded), label: 'Profile',),
+            icon: Icon(Icons.person_rounded),
+            label: 'Profile',
+          ),
         ],
       ),
     );
