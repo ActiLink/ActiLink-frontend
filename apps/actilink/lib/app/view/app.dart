@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:actilink/app/environment.dart';
-import 'package:actilink/auth/auth.dart';
 import 'package:actilink/auth/logic/auth_cubit.dart';
-import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
-import 'package:actilink/home/main_screen.dart';
+import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:actilink/l10n/l10n.dart';
+import 'package:actilink/router.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +25,7 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (context) => ApiService(baseUrl: 'https://10.0.2.2:5289')
+          create: (context) => ApiService(baseUrl: 'http://10.0.2.2:5289/')
             ..addInterceptor(
               AuthInterceptor(
                 tokenRepository: context.read<AuthTokenRepository>(),
@@ -42,6 +39,11 @@ class App extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => EventRepository(
+            apiService: context.read<ApiService>(),
+          ),
+        ),
+        RepositoryProvider(
+          create: (context) => HobbyRepository(
             apiService: context.read<ApiService>(),
           ),
         ),
@@ -69,8 +71,14 @@ class App extends StatelessWidget {
               eventRepository: context.read<EventRepository>(),
             )..fetchEvents(),
           ),
+          BlocProvider(
+            create: (context) => HobbiesCubit(
+              hobbyRepository: context.read<HobbyRepository>(),
+            )..fetchHobbies(),
+          ),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: appRouter,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             appBarTheme: AppBarTheme(
@@ -80,15 +88,6 @@ class App extends StatelessWidget {
           ),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              log('App BlocBuilder: AuthState = ${state.runtimeType}');
-
-              return state is AuthAuthenticated
-                  ? const MainScreen()
-                  : const WelcomeScreen();
-            },
-          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/events_state.dart';
+import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:actilink/events/view/widgets/datetime_picker.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +106,8 @@ class EventFormState extends State<EventForm> {
         _isSearching = false;
       } else {
         _isSearching = true;
-        _filteredHobbies = Hobbies.all
+        final allHobbies = context.read<HobbiesCubit>().state.hobbies;
+        _filteredHobbies = allHobbies
             .where(
               (hobby) =>
                   hobby.name.toLowerCase().contains(query) &&

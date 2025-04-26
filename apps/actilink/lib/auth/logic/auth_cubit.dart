@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:core/core.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required AuthService authService})
@@ -14,6 +16,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   final AuthService _authService;
   StreamSubscription<User?>? _userSubscription;
+  bool get isLoggedIn => state is AuthAuthenticated;
 
   void _initialize() {
     _userSubscription = _authService.userStream.listen(_onUserChanged);
@@ -121,17 +124,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     if (state is AuthUnauthenticated) return;
     log('AuthCubit: Logging out...');
     try {
       await _authService.logout();
       if (isClosed) return;
-      emit(
-        const AuthUnauthenticated(
-          message: 'Successfully logged out.',
-        ),
-      );
+      emit(const AuthUnauthenticated(message: 'Successfully logged out.'));
+
+      if (context.mounted) {
+        context.go('/welcome');
+      }
     } catch (e) {
       log('AuthCubit: Logout failed unexpectedly: $e');
       if (isClosed) return;

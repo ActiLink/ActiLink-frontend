@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
-import 'package:actilink/events/view/edit_event_screen.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
 import 'package:core/core.dart'; // Includes models, services
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
@@ -117,7 +117,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 children: [
                   // Back Button
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => context.go('/events'),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -353,17 +353,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   // --- Actions ---
-
   Future<void> _navigateToEdit() async {
-    final result = await Navigator.push<Event>(
-      context,
-      MaterialPageRoute<Event>(
-        builder: (context) => BlocProvider.value(
-          value: BlocProvider.of<EventsCubit>(context),
-          child: EditEventScreen(event: _currentEvent),
-        ),
-        fullscreenDialog: true,
-      ),
+    // Używamy context.push zamiast Navigator.push
+    final result = await context.push<Event>(
+      '/events/edit/${_currentEvent.id}',
+      extra: _currentEvent,
     );
 
     if (result != null && mounted) {

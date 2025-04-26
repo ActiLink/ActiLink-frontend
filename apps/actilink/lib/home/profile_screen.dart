@@ -90,7 +90,11 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: context.read<AuthCubit>().logout,
+              onPressed: () async {
+                await context.read<AuthCubit>().logout(
+                      context,
+                    );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.brand.withValues(alpha: 0.8),
                 shape: RoundedRectangleBorder(

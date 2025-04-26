@@ -1,10 +1,9 @@
 import 'dart:developer';
 
-import 'package:actilink/events/logic/events_cubit.dart';
-import 'package:actilink/events/view/event_details.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
@@ -44,15 +43,7 @@ class EventCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<Widget>(
-              builder: (_) => BlocProvider.value(
-                value: BlocProvider.of<EventsCubit>(context),
-                child: EventDetailsScreen(event: event),
-              ),
-            ),
-          );
+          context.go('/events/details/${event.id}', extra: event);
         },
         child: Padding(
           padding: const EdgeInsets.all(16),

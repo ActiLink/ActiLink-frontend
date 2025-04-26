@@ -1,13 +1,15 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/login_modal.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
+import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ui/ui.dart';
 
 class RegisterModal extends StatefulWidget {
-  const RegisterModal({super.key});
+  const RegisterModal({super.key, this.isBusiness = false});
+  final bool isBusiness;
 
   @override
   State<RegisterModal> createState() => _RegisterModalState();
@@ -21,6 +23,8 @@ class _RegisterModalState extends State<RegisterModal> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   String? errorMessage;
+  // ignore: unused_field
+  late String? _taxId;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class _RegisterModalState extends State<RegisterModal> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           if (Navigator.canPop(context)) Navigator.pop(context);
+          context.go('/home');
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -58,16 +63,24 @@ class _RegisterModalState extends State<RegisterModal> {
                 Column(
                   children: [
                     const SizedBox(height: 10),
-                    const Text(
-                      'Create an Account',
-                      style: AppTextStyles.displayMedium,
+                    Text(
+                      widget.isBusiness
+                          ? 'Create a Business Account'
+                          : 'Create an Account',
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Join ActiLink and start your adventure today!',
-                      style: AppTextStyles.bodyMedium,
+                    Text(
+                      widget.isBusiness
+                          ? 'Register your business to promote events.'
+                          : 'Join ActiLink and start your adventure today!',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
 
                     /// Error Message
                     if (errorMessage != null) ...[
@@ -83,6 +96,9 @@ class _RegisterModalState extends State<RegisterModal> {
                     /// Email Field
                     AppTextField(
                       label: 'Email',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Enter your email',
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
@@ -100,6 +116,9 @@ class _RegisterModalState extends State<RegisterModal> {
                     /// Username Field
                     AppTextField(
                       label: 'Username',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Choose a username',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -112,10 +131,30 @@ class _RegisterModalState extends State<RegisterModal> {
                       },
                       onChanged: (value) => _username = value,
                     ),
+                    if (widget.isBusiness) ...[
+                      AppTextField(
+                        label: 'Tax ID',
+                        labelStyle: TextStyle(
+                          color: widget.isBusiness ? Colors.white : null,
+                        ),
+                        hintText: 'Enter your business tax ID',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Tax ID is required for business accounts.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) => _taxId = value,
+                      ),
+                      const SizedBox(height: 15),
+                    ],
 
                     /// Password Field with Visibility Toggle
                     AppTextField(
                       label: 'Password',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Enter your password',
                       obscureText: _obscurePassword,
                       validator: _validatePassword,
@@ -135,6 +174,9 @@ class _RegisterModalState extends State<RegisterModal> {
                     /// Confirm Password Field
                     AppTextField(
                       label: 'Confirm Password',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       hintText: 'Re-enter your password',
                       obscureText: _obscureConfirmPassword,
                       validator: (value) {
@@ -182,12 +224,28 @@ class _RegisterModalState extends State<RegisterModal> {
                     Navigator.pop(context);
                     Future.delayed(Duration.zero, () {
                       if (context.mounted) {
-                        // Show the login modal
-                        showCustomBottomSheet(context, const LoginModal());
+                        widget.isBusiness
+                            ? showCustomBottomSheet(
+                                context,
+                                const LoginModal(
+                                  isBusiness: true,
+                                ),
+                                backgroundColor: AppColors.accent,
+                              )
+                            : showCustomBottomSheet(
+                                context,
+                                const LoginModal(),
+                              );
                       }
                     });
                   },
                   type: ButtonType.text,
+                  child: Text(
+                    'Already have an account?',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: widget.isBusiness ? Colors.white : AppColors.brand,
+                    ),
+                  ),
                 ),
               ],
             ),
