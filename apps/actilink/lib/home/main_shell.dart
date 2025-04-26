@@ -20,7 +20,7 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString(); 
+    final location = GoRouterState.of(context).uri.toString();
     final selectedIndex = _locationToTabIndex(location);
 
     return Scaffold(
