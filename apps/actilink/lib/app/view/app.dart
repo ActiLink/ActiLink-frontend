@@ -25,7 +25,7 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (context) => ApiService(baseUrl: 'http://10.0.2.2:7062/')
+          create: (context) => ApiService(baseUrl: 'http://10.0.2.2:5289/')
             ..addInterceptor(
               AuthInterceptor(
                 tokenRepository: context.read<AuthTokenRepository>(),
