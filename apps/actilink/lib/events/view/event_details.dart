@@ -354,7 +354,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   // --- Actions ---
   Future<void> _navigateToEdit() async {
-    // Używamy context.push zamiast Navigator.push
     final result = await context.push<Event>(
       '/events/edit/${_currentEvent.id}',
       extra: _currentEvent,

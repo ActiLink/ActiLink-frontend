@@ -2,7 +2,10 @@ import 'package:core/src/models/organizer.dart';
 
 class BusinessClient extends Organizer {
   const BusinessClient({
-    required super.id, required super.name, required super.email, required this.taxId,
+    required super.id,
+    required super.name,
+    required super.email,
+    required this.taxId,
   });
 
   factory BusinessClient.fromJson(Map<String, dynamic> json) {

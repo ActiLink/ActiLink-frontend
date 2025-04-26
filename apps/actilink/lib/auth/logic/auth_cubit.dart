@@ -11,7 +11,7 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required AuthService authService})
       : _authService = authService,
         super(const AuthInitial()) {
-   _userSubscription = _authService.userStream.listen(_onUserChanged);
+    _userSubscription = _authService.userStream.listen(_onUserChanged);
   }
 
   final AuthService _authService;

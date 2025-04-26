@@ -2,7 +2,9 @@ import 'package:equatable/equatable.dart';
 
 abstract class Organizer extends Equatable {
   const Organizer({
-    required this.id, required this.name, required this.email,
+    required this.id,
+    required this.name,
+    required this.email,
   });
 
   final String id;

@@ -97,7 +97,7 @@ class AppStartup extends StatefulWidget {
     required this.child,
     super.key,
   });
-  
+
   final Widget child;
 
   @override
@@ -120,11 +120,11 @@ class _AppStartupState extends State<AppStartup> {
 
     // Initialize the auth interceptor
     context.read<ApiService>().addInterceptor(
-      AuthInterceptor(
-        tokenRepository: context.read<AuthTokenRepository>(),
-        authService: context.read<AuthService>(),
-      ),
-    );
+          AuthInterceptor(
+            tokenRepository: context.read<AuthTokenRepository>(),
+            authService: context.read<AuthService>(),
+          ),
+        );
 
     // Initialize all required data
     await authCubit.checkAuthStatus();

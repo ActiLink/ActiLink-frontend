@@ -8,8 +8,8 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor({
     required AuthTokenRepository tokenRepository,
     required AuthService authService,
-  }) : _tokenRepository = tokenRepository,
-      _authService = authService;
+  })  : _tokenRepository = tokenRepository,
+        _authService = authService;
 
   final AuthTokenRepository _tokenRepository;
   final AuthService _authService;
