@@ -11,17 +11,12 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required AuthService authService})
       : _authService = authService,
         super(const AuthInitial()) {
-    _initialize();
+   _userSubscription = _authService.userStream.listen(_onUserChanged);
   }
 
   final AuthService _authService;
   StreamSubscription<User?>? _userSubscription;
   bool get isLoggedIn => state is AuthAuthenticated;
-
-  void _initialize() {
-    _userSubscription = _authService.userStream.listen(_onUserChanged);
-    checkAuthStatus();
-  }
 
   void _onUserChanged(User? user) {
     if (isClosed) return;
@@ -54,6 +49,7 @@ class AuthCubit extends Cubit<AuthState> {
           ),
         );
       }
+      emit(AuthAuthenticated(user: user!));
     } catch (e) {
       log('AuthCubit: Error during initial auth check: $e');
       if (isClosed) return;

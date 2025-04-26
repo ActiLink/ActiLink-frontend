@@ -7,9 +7,12 @@ import 'package:synchronized/synchronized.dart';
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({
     required AuthTokenRepository tokenRepository,
-  }) : _tokenRepository = tokenRepository;
+    required AuthService authService,
+  }) : _tokenRepository = tokenRepository,
+      _authService = authService;
 
   final AuthTokenRepository _tokenRepository;
+  final AuthService _authService;
   final Lock _refreshLock = Lock();
   bool _isRefreshing = false;
 
@@ -33,9 +36,11 @@ class AuthInterceptor extends Interceptor {
           log('Interceptor: Token refreshed successfully.');
         } else {
           log('Interceptor: Failed to refresh token. Status code: ${response.statusCode}');
+          await _authService.logout();
         }
       } catch (e) {
         log('Interceptor: Error refreshing token: $e');
+        await _authService.logout();
       }
     }
   }
