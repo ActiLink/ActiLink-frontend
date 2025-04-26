@@ -1,13 +1,15 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/register_modal.dart';
-import 'package:actilink/auth/view/welcome_screen.dart';
+import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ui/ui.dart';
 
 class LoginModal extends StatefulWidget {
-  const LoginModal({super.key});
+  const LoginModal({super.key, this.isBusiness = false});
+  final bool isBusiness;
 
   @override
   State<LoginModal> createState() => _LoginModalState();
@@ -25,9 +27,8 @@ class _LoginModalState extends State<LoginModal> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
+          if (Navigator.canPop(context)) Navigator.pop(context);
+          context.go('/home');
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -58,18 +59,26 @@ class _LoginModalState extends State<LoginModal> {
                 Column(
                   children: [
                     const SizedBox(height: 10),
-                    const Text(
-                      'Sign into your account',
-                      style: AppTextStyles.displayMedium,
+                    Text(
+                      widget.isBusiness
+                          ? 'Sign into your Business Account'
+                          : 'Sign into your account',
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Sign in to continue your journey with ActiLink.',
-                      style: AppTextStyles.bodyMedium,
+                    Text(
+                      widget.isBusiness
+                          ? 'Manage and promote your events.'
+                          : 'Sign in to continue your journey with ActiLink.',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-
-                    /// Error Message
                     if (errorMessage != null) ...[
                       Text(
                         errorMessage!,
@@ -79,11 +88,12 @@ class _LoginModalState extends State<LoginModal> {
                       ),
                       const SizedBox(height: 15),
                     ],
-
-                    /// Email Field
                     AppTextField(
                       label: 'Email',
                       hintText: 'Enter your email',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -96,11 +106,12 @@ class _LoginModalState extends State<LoginModal> {
                       },
                       onChanged: (value) => _email = value,
                     ),
-
-                    /// Password Field with Visibility Toggle
                     AppTextField(
                       label: 'Password',
                       hintText: 'Enter your password',
+                      labelStyle: TextStyle(
+                        color: widget.isBusiness ? Colors.white : null,
+                      ),
                       obscureText: _obscurePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -120,7 +131,6 @@ class _LoginModalState extends State<LoginModal> {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -130,25 +140,41 @@ class _LoginModalState extends State<LoginModal> {
                       text: isLoading ? 'Signing In...' : 'Sign In',
                       onPressed: isLoading ? () {} : _tryLogin,
                     ),
-
                     const SizedBox(height: 10),
-
-                    /// Navigate to Register Screen
                     AppButton(
                       text: "Don't have an account?",
                       onPressed: () {
                         Navigator.pop(context);
                         Future.delayed(Duration.zero, () {
                           if (context.mounted) {
-                            // Show the register modal
-                            showCustomBottomSheet(
-                              context,
-                              const RegisterModal(),
-                            );
+                            widget.isBusiness
+                                ? showCustomBottomSheet(
+                                    context,
+                                    RegisterModal(
+                                      isBusiness: widget.isBusiness,
+                                    ),
+                                    backgroundColor: AppColors.accent,
+                                    initialSize: 0.95,
+                                    maxSize: 0.98,
+                                  )
+                                : showCustomBottomSheet(
+                                    context,
+                                    RegisterModal(
+                                      isBusiness: widget.isBusiness,
+                                    ),
+                                  );
                           }
                         });
                       },
                       type: ButtonType.text,
+                      child: Text(
+                        "Don't have an account?",
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: widget.isBusiness
+                              ? Colors.white
+                              : AppColors.brand,
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:actilink/events/view/widgets/event_form.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class EditEventScreen extends StatelessWidget {
   const EditEventScreen({required this.event, super.key});
@@ -11,7 +12,7 @@ class EditEventScreen extends StatelessWidget {
     return EventForm(
       event: event,
       onSubmit: (updatedEvent) {
-        Navigator.pop(context, updatedEvent);
+        context.go('/events/details/${event.id}', extra: event);
       },
     );
   }

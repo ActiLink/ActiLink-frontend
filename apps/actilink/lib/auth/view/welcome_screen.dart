@@ -1,30 +1,9 @@
-import 'package:actilink/auth/view/login_modal.dart';
-import 'package:actilink/auth/view/register_modal.dart';
+import 'package:actilink/auth/view/select_user_type_modal_register.dart';
+import 'package:actilink/auth/view/selet_user_type_modal_login.dart';
+import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui/ui.dart';
-
-void showCustomBottomSheet(BuildContext context, Widget screen) {
-  showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) {
-      return DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        minChildSize: 0.6,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) {
-          return screen;
-        },
-      );
-    },
-  );
-}
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -80,14 +59,16 @@ class WelcomeScreen extends StatelessWidget {
                       text: 'Get started',
                       onPressed: () => showCustomBottomSheet(
                         context,
-                        const RegisterModal(),
+                        const SelectUserTypeModalRegister(),
                       ),
                     ),
                     const SizedBox(height: 18),
                     AppButton(
                       text: 'I already have an account',
-                      onPressed: () =>
-                          showCustomBottomSheet(context, const LoginModal()),
+                      onPressed: () => showCustomBottomSheet(
+                        context,
+                        const SelectUserTypeModalLogin(),
+                      ),
                       type: ButtonType.secondary,
                     ),
                   ],
