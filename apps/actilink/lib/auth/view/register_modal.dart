@@ -31,6 +31,7 @@ class _RegisterModalState extends State<RegisterModal> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           if (Navigator.canPop(context)) Navigator.pop(context);
+          context.go('/home');
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
