@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/events_state.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
@@ -502,7 +503,7 @@ class EventFormState extends State<EventForm> {
       }
 
       // Authentication check
-      final currentUser = await context.read<AuthService>().currentUser;
+      final currentUser = context.read<AuthCubit>().user;
       if (currentUser == null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -596,19 +597,30 @@ class EventFormState extends State<EventForm> {
             );
 
           widget.onSubmit(resultEvent ?? eventData);
-        } else if (!success &&
-            mounted &&
-            context.read<EventsCubit>().state.error.isEmpty) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Failed to ${widget.event == null ? 'post' : 'update'} event. Please try again.',
+        } else if (!success && mounted) {
+          if (context.read<EventsCubit>().state.error.isEmpty) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Failed to ${widget.event == null ? 'post' : 'update'} event. Please try again.',
+                  ),
+                  backgroundColor: AppColors.error,
                 ),
-                backgroundColor: AppColors.error,
-              ),
-            );
+              );
+          } else {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Error: ${context.read<EventsCubit>().state.error}',
+                  ),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+          }
         }
       } catch (e) {
         log('Error submitting form: $e');

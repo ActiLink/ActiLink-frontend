@@ -1,6 +1,6 @@
-import 'package:core/src/models/organizer.dart';
+import 'package:core/src/models/base_user.dart';
 
-class BusinessClient extends Organizer {
+class BusinessClient extends BaseUser {
   const BusinessClient({
     required super.id,
     required super.name,

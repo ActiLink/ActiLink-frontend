@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Organizer extends Equatable {
-  const Organizer({
+abstract class BaseUser extends Equatable {
+  const BaseUser({
     required this.id,
     required this.name,
     required this.email,

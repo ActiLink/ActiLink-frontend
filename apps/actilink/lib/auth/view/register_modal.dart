@@ -259,11 +259,20 @@ class _RegisterModalState extends State<RegisterModal> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       if (_username != null && _email != null && _password != null) {
-        context.read<AuthCubit>().registerAndLogin(
-              name: _username!,
-              email: _email!,
-              password: _password!,
-            );
+        if (widget.isBusiness && _taxId != null) {
+          context.read<AuthCubit>().registerBusinessClientAndLogin(
+                name: _username!,
+                email: _email!,
+                password: _password!,
+                taxId: _taxId!,
+              );
+        } else {
+          context.read<AuthCubit>().registerUserAndLogin(
+                name: _username!,
+                email: _email!,
+                password: _password!,
+              );
+        }
       }
     }
   }

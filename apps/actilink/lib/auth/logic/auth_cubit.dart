@@ -15,17 +15,19 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   final AuthService _authService;
-  StreamSubscription<User?>? _userSubscription;
+  StreamSubscription<BaseUser?>? _userSubscription;
   bool get isLoggedIn => state is AuthAuthenticated;
+  BaseUser? get user => isLoggedIn ? (state as AuthAuthenticated).user : null;
+  bool get isBusinessClient => isLoggedIn && user is BusinessClient;
 
-  void _onUserChanged(User? user) {
+  void _onUserChanged(BaseUser? user) {
     if (isClosed) return;
     final currentState = state;
     if (user != null) {
       if (currentState is AuthAuthenticated && currentState.user == user) {
         return;
       }
-      log('AuthCubit: User stream indicates authentication: ${user.name}');
+      log('AuthCubit: User stream indicates authentication: ${user.runtimeType} ${user.name}');
       emit(AuthAuthenticated(user: user));
     } else {
       if (currentState is AuthUnauthenticated) return;
@@ -42,14 +44,15 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthLoading(message: 'Checking session...'));
     try {
       final user = await _authService.checkInitialAuthStatus();
-      if (user == null && state is AuthLoading) {
+      if (user == null && !isClosed && state is AuthLoading) {
         emit(
           const AuthUnauthenticated(
             message: 'No valid session found.',
           ),
         );
+      } else if (user != null && !isClosed) {
+        emit(AuthAuthenticated(user: user));
       }
-      emit(AuthAuthenticated(user: user!));
     } catch (e) {
       log('AuthCubit: Error during initial auth check: $e');
       if (isClosed) return;
@@ -57,69 +60,166 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> registerAndLogin({
+  Future<T?> _handleAuthApiCall<T>({
+    required String actionName,
+    required String loadingMessage,
+    required Future<T> Function() apiCall,
+    required String genericErrorMessage,
+    void Function(ApiException exception)? handleSpecificErrors,
+  }) async {
+    if (state is AuthLoading) return null;
+    log('AuthCubit: $actionName...');
+    emit(AuthLoading(message: loadingMessage));
+
+    try {
+      final result = await apiCall();
+      return result;
+    } on ApiException catch (e) {
+      log('AuthCubit: $actionName Error: $e');
+      if (isClosed) return null;
+
+      if (handleSpecificErrors != null) {
+        handleSpecificErrors(e);
+      } else {
+        emit(AuthFailure(error: e.message));
+      }
+    } catch (e) {
+      log('AuthCubit: $actionName Generic Error: $e');
+      if (isClosed) return null;
+      emit(AuthFailure(error: genericErrorMessage));
+    }
+    return null;
+  }
+
+  Future<void> _handleRegistrationProcess({
+    required String userType,
+    required String email,
+    required Future<void> Function() registerFunction,
+    required Future<void> Function() loginFunction,
+  }) async {
+    var registrationSucceeded = false;
+
+    await _handleAuthApiCall<void>(
+      actionName: 'Registering $userType $email',
+      loadingMessage: 'Creating ${userType.toLowerCase()} account...',
+      apiCall: () async {
+        await registerFunction();
+        registrationSucceeded = true;
+      },
+      genericErrorMessage: 'An unknown error occurred during sign up.',
+      handleSpecificErrors: (e) {
+        if (e is ConflictException) {
+          emit(AuthFailure(error: "Email '$email' is already registered."));
+        } else if (e is BadRequestException) {
+          emit(AuthFailure(error: 'Registration failed: ${e.message}'));
+        } else {
+          emit(AuthFailure(error: e.message));
+        }
+      },
+    );
+
+    if (registrationSucceeded && !isClosed) {
+      emit(
+        AuthUnauthenticated(
+          message: '${userType.toLowerCase()} account created successfully.',
+        ),
+      );
+      log('AuthCubit: $userType registration successful for $email. Logging in...');
+      await loginFunction();
+    }
+  }
+
+  Future<void> _handleLoginProcess({
+    required String userType,
+    required String email,
+    required Future<BaseUser> Function() loginFunction,
+  }) async {
+    final user = await _handleAuthApiCall<BaseUser>(
+      actionName: 'Logging in $email',
+      loadingMessage: 'Signing in...',
+      apiCall: loginFunction,
+      genericErrorMessage: 'An unknown error occurred during login.',
+      handleSpecificErrors: (e) {
+        if (e is UnauthorizedException || e is BadRequestException) {
+          emit(const AuthFailure(error: 'Invalid email or password.'));
+        } else {
+          emit(AuthFailure(error: e.message));
+        }
+      },
+    );
+
+    if (user != null && !isClosed) {
+      log('AuthCubit: Login successful for ${user.runtimeType} ${user.name}.');
+      emit(AuthAuthenticated(user: user));
+    }
+  }
+
+  // --- Registration ---
+  Future<void> registerUserAndLogin({
     required String name,
     required String email,
     required String password,
   }) async {
-    if (state is AuthLoading) return;
-    log('AuthCubit: Registering and logging in user $email...');
-    emit(const AuthLoading(message: 'Creating account and signing in...'));
-    try {
-      final user = await _authService.registerAndLogin(
+    await _handleRegistrationProcess(
+      userType: 'USER',
+      email: email,
+      registerFunction: () => _authService.registerUser(
         name: name,
         email: email,
         password: password,
-      );
-      if (isClosed) return;
-
-      log('AuthCubit: Register and Login successful for ${user.name}.');
-      emit(AuthAuthenticated(user: user));
-    } on ApiException catch (e) {
-      log('AuthCubit: RegisterAndLogin Error: $e');
-      if (isClosed) return;
-      if (e is ConflictException) {
-        emit(AuthFailure(error: "Email '$email' is already registered."));
-      } else if (e is BadRequestException) {
-        emit(AuthFailure(error: 'Registration or login failed: ${e.message}'));
-      } else {
-        emit(AuthFailure(error: e.message));
-      }
-    } catch (e) {
-      log('AuthCubit: RegisterAndLogin Generic Error: $e');
-      if (isClosed) return;
-      emit(
-        const AuthFailure(
-          error: 'An unknown error occurred during sign up.',
-        ),
-      );
-    }
+      ),
+      loginFunction: () => loginUser(email: email, password: password),
+    );
   }
 
-  Future<void> login({required String email, required String password}) async {
-    if (state is AuthLoading) return;
-    log('AuthCubit: Logging in $email...');
-    emit(const AuthLoading(message: 'Signing in...'));
-    try {
-      final user = await _authService.login(email: email, password: password);
-      if (isClosed) return;
-      log('AuthCubit: Login successful for ${user.name}.');
-      emit(AuthAuthenticated(user: user));
-    } on ApiException catch (e) {
-      log('AuthCubit: Login Error: $e');
-      if (isClosed) return;
-      if (e is UnauthorizedException || e is BadRequestException) {
-        emit(const AuthFailure(error: 'Invalid email or password.'));
-      } else {
-        emit(AuthFailure(error: e.message));
-      }
-    } catch (e) {
-      log('AuthCubit: Login Generic Error: $e');
-      if (isClosed) return;
-      emit(const AuthFailure(error: 'An unknown error occurred during login.'));
-    }
+  Future<void> registerBusinessClientAndLogin({
+    required String name,
+    required String email,
+    required String password,
+    required String taxId,
+  }) async {
+    await _handleRegistrationProcess(
+      userType: 'BUSINESS',
+      email: email,
+      registerFunction: () => _authService.registerBusinessClient(
+        name: name,
+        email: email,
+        password: password,
+        taxId: taxId,
+      ),
+      loginFunction: () =>
+          loginBusinessClient(email: email, password: password),
+    );
   }
 
+  // --- Login ---
+  Future<void> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    await _handleLoginProcess(
+      userType: 'USER',
+      email: email,
+      loginFunction: () =>
+          _authService.loginUser(email: email, password: password),
+    );
+  }
+
+  Future<void> loginBusinessClient({
+    required String email,
+    required String password,
+  }) async {
+    await _handleLoginProcess(
+      userType: 'BUSINESS CLIENT',
+      email: email,
+      loginFunction: () => _authService.loginBusinessClient(
+        email: email,
+        password: password,
+      ),
+    );
+  }
+
+  // --- Logout ---
   Future<void> logout(BuildContext context) async {
     if (state is AuthUnauthenticated) return;
     log('AuthCubit: Logging out...');
@@ -143,8 +243,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void resetAuthStateAfterFailure() {
-    if (state is AuthFailure) {
-      log('AuthCubit: Resetting state after auth failure.');
+    if (state is AuthFailure && !isClosed) {
+      log('AuthCubit: Resetting state to unauthenticated after auth failure.');
       emit(const AuthUnauthenticated());
     }
   }

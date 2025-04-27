@@ -29,7 +29,7 @@ class App extends StatelessWidget {
           create: (context) => ApiService(baseUrl: 'https://10.0.2.2:5289/'),
         ),
         RepositoryProvider(
-          create: (context) => UserRepository(
+          create: (context) => BaseUserRepository(
             apiService: context.read<ApiService>(),
           ),
         ),
@@ -47,7 +47,7 @@ class App extends StatelessWidget {
           create: (context) => AuthService(
             apiService: context.read<ApiService>(),
             tokenRepository: context.read<AuthTokenRepository>(),
-            userRepository: context.read<UserRepository>(),
+            baseUserRepository: context.read<BaseUserRepository>(),
           ),
         ),
         RepositoryProvider(

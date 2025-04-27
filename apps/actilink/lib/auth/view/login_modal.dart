@@ -190,10 +190,17 @@ class _LoginModalState extends State<LoginModal> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       if (_email != null && _password != null) {
-        context.read<AuthCubit>().login(
-              email: _email!,
-              password: _password!,
-            );
+        if (widget.isBusiness) {
+          context.read<AuthCubit>().loginBusinessClient(
+                email: _email!,
+                password: _password!,
+              );
+        } else {
+          context.read<AuthCubit>().loginUser(
+                email: _email!,
+                password: _password!,
+              );
+        }
       }
     }
   }

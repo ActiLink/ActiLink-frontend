@@ -24,7 +24,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   late Event _currentEvent;
   final NumberFormat _currencyFormat =
       NumberFormat.simpleCurrency(locale: 'en_US');
-  User? _organizer;
+  BaseUser? _organizer;
   String _formattedLocation = 'Loading location...';
   bool _isDeleting = false;
 
@@ -53,9 +53,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Future<void> _fetchOrganizerDetailsIfNeeded() async {
     if (_currentEvent.organizerId.isNotEmpty) {
       try {
-        final userRepo = RepositoryProvider.of<UserRepository>(context);
+        final userRepo = RepositoryProvider.of<BaseUserRepository>(context);
         final organizer =
-            await userRepo.fetchUserById(_currentEvent.organizerId);
+            await userRepo.tryFetchById(_currentEvent.organizerId);
         if (mounted) {
           setState(() {
             _organizer = organizer;

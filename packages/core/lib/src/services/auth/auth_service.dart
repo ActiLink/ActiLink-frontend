@@ -10,46 +10,52 @@ class AuthService {
   AuthService({
     required ApiService apiService,
     required AuthTokenRepository tokenRepository,
-    required UserRepository userRepository,
+    required BaseUserRepository baseUserRepository,
   })  : _apiService = apiService,
         _tokenRepository = tokenRepository,
-        _userRepository = userRepository;
+        _baseUserRepository = baseUserRepository;
 
   final ApiService _apiService;
   final AuthTokenRepository _tokenRepository;
-  final UserRepository _userRepository;
+  final BaseUserRepository _baseUserRepository;
 
-  final StreamController<User?> _userStreamController =
-      StreamController<User?>.broadcast();
+  final StreamController<BaseUser?> _userStreamController =
+      StreamController<BaseUser?>.broadcast();
 
-  Stream<User?> get userStream => _userStreamController.stream;
+  Stream<BaseUser?> get userStream => _userStreamController.stream;
 
-  Future<User?> get currentUser => _userRepository.getSavedUser();
-
-  User? _getUserFromToken(String token) {
+  Future<BaseUser?> _getUserFromToken(String token) async {
     try {
       final decodedToken = JwtDecoder.decode(token);
       final userId = decodedToken['nameid'] as String?;
-      final userName = decodedToken['unique_name'] as String?;
-      final userEmail = decodedToken['email'] as String?;
-      if (userId == null ||
-          userId.isEmpty ||
-          userName == null ||
-          userName.isEmpty ||
-          userEmail == null ||
-          userEmail.isEmpty) {
+      final role = decodedToken['role'] as String?;
+
+      if (userId == null || userId.isEmpty || role == null || role.isEmpty) {
         log('Decoded token is missing required fields.');
         return null;
       }
-      log('Decoded User from token: $userId');
-      return User(id: userId, name: userName, email: userEmail);
+
+      log('Decoded User ID from token: $userId');
+      try {
+        if (role == 'User') {
+          return await _baseUserRepository.fetchUserById(userId);
+        } else if (role == 'BusinessClient') {
+          return await _baseUserRepository.fetchBusinessClientById(userId);
+        } else {
+          log('Unknown role: $role');
+          return null;
+        }
+      } catch (e) {
+        log('Error fetching user from API: $e');
+        return null;
+      }
     } catch (e) {
       log('Error decoding JWT: $e');
       return null;
     }
   }
 
-  Future<User?> checkInitialAuthStatus() async {
+  Future<BaseUser?> checkInitialAuthStatus() async {
     log('AuthService: Checking initial auth status...');
     final token = await _tokenRepository.getToken();
 
@@ -60,20 +66,19 @@ class AuthService {
     }
 
     log('AuthService: Valid token found. Verifying...');
-    final user = _getUserFromToken(token.accessToken);
+    final user = await _getUserFromToken(token.accessToken);
     if (user == null) {
       log('AuthService: Could not get User from token. Logging out.');
       await logout();
       return null;
     }
 
-    await _userRepository.saveUserLocally(user);
     _userStreamController.add(user);
     log('AuthService: Initial auth status check successful. User: ${user.name}');
     return user;
   }
 
-  Future<User> register({
+  Future<User> registerUser({
     required String name,
     required String email,
     required String password,
@@ -99,13 +104,42 @@ class AuthService {
     }
   }
 
-  Future<User> login({
+  Future<BusinessClient> registerBusinessClient({
+    required String name,
     required String email,
     required String password,
+    required String taxId,
+  }) async {
+    log('AuthService: Attempting registration for email: $email');
+    try {
+      final response = await _apiService.postData('/BusinessClients/register', {
+        'name': name,
+        'email': email,
+        'password': password,
+        'taxId': taxId,
+      });
+
+      if (response is Map<String, dynamic>) {
+        final businessClient = BusinessClient.fromJson(response);
+        log('AuthService: Registration successful for business client: ${businessClient.name}');
+        return businessClient;
+      } else {
+        throw ApiException('Invalid response format during registration');
+      }
+    } catch (e) {
+      log('Registration service failed: $e');
+      rethrow;
+    }
+  }
+
+  Future<BaseUser> _handleLogin({
+    required String email,
+    required String password,
+    required String endpoint,
   }) async {
     log('AuthService: Attempting login for email: $email');
     try {
-      final response = await _apiService.postData('/Users/login', {
+      final response = await _apiService.postData(endpoint, {
         'email': email,
         'password': password,
       });
@@ -120,14 +154,12 @@ class AuthService {
         await _tokenRepository.saveToken(token);
         log('AuthService: Tokens saved.');
 
-        final user = _getUserFromToken(token.accessToken);
+        final user = await _getUserFromToken(token.accessToken);
         if (user == null) {
           throw ApiException(
             'Login successful but failed to extract User from token.',
           );
         }
-
-        await _userRepository.saveUserLocally(user);
 
         log('AuthService: User details fetched and saved: ${user.name}');
         _userStreamController.add(user);
@@ -142,44 +174,26 @@ class AuthService {
     }
   }
 
-  Future<User> registerAndLogin({
-    required String name,
+  Future<BaseUser> loginUser({
     required String email,
     required String password,
   }) async {
-    log('AuthService: Attempting registerAndLogin for email: $email');
+    return _handleLogin(
+      email: email,
+      password: password,
+      endpoint: '/Users/login',
+    );
+  }
 
-    try {
-      log('AuthService: Calling registration endpoint...');
-      final regResponse = await _apiService.postData('/Users/register', {
-        'name': name,
-        'email': email,
-        'password': password,
-      });
-
-      if (regResponse is Map<String, dynamic>) {
-        final createdUser = User.fromJson(regResponse);
-        log('AuthService: Registration successful for ${createdUser.name}. Now attempting login...');
-      } else {
-        log('AuthService: Registration endpoint returned unexpected success format: $regResponse');
-        throw ApiException(
-          'Registration successful but response format was unexpected.',
-        );
-      }
-    } catch (e) {
-      log('AuthService: Registration failed during registerAndLogin: $e');
-      rethrow;
-    }
-
-    log('AuthService: Calling login endpoint after successful registration...');
-    try {
-      final loggedInUser = await login(email: email, password: password);
-      log('AuthService: registerAndLogin completed successfully.');
-      return loggedInUser;
-    } catch (e) {
-      log('AuthService: Login failed after successful registration: $e');
-      rethrow;
-    }
+  Future<BaseUser> loginBusinessClient({
+    required String email,
+    required String password,
+  }) async {
+    return _handleLogin(
+      email: email,
+      password: password,
+      endpoint: '/BusinessClients/login',
+    );
   }
 
   Future<void> refreshToken() async {
@@ -191,7 +205,7 @@ class AuthService {
     log('AuthService: Attempting token refresh.');
 
     try {
-      final response = await _apiService.postData('/Users/refresh', {
+      final response = await _apiService.postData('/Auth/refresh', {
         'refreshToken': currentToken.refreshToken,
       });
 
@@ -209,6 +223,8 @@ class AuthService {
       }
     } catch (e) {
       log('AuthService: Token refresh failed: $e.');
+      await logout();
+      log('AuthService: User logged out after failed token refresh.');
       rethrow;
     }
   }
@@ -216,7 +232,6 @@ class AuthService {
   Future<void> logout() async {
     log('AuthService: Logging out.');
     await _tokenRepository.clearToken();
-    await _userRepository.clearUserLocally();
     _userStreamController.add(null);
   }
 
