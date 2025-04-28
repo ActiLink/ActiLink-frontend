@@ -1,7 +1,6 @@
 import 'package:core/core.dart';
 import 'package:equatable/equatable.dart';
 
-/// Sealed base class for all authentication states.
 sealed class AuthState extends Equatable {
   const AuthState();
 
@@ -15,7 +14,6 @@ final class AuthInitial extends AuthState {
 
 final class AuthLoading extends AuthState {
   const AuthLoading({this.message});
-
   final String? message;
 
   @override
@@ -24,8 +22,7 @@ final class AuthLoading extends AuthState {
 
 final class AuthAuthenticated extends AuthState {
   const AuthAuthenticated({required this.user});
-
-  final User user;
+  final BaseUser user;
 
   @override
   List<Object?> get props => [user];
@@ -33,7 +30,6 @@ final class AuthAuthenticated extends AuthState {
 
 final class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated({this.message});
-
   final String? message;
 
   @override
@@ -42,9 +38,7 @@ final class AuthUnauthenticated extends AuthState {
 
 final class AuthFailure extends AuthState {
   const AuthFailure({required this.error});
-
   final String error;
-
   @override
   List<Object?> get props => [error];
 }

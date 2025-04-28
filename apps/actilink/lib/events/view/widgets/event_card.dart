@@ -64,10 +64,10 @@ class EventCard extends StatelessWidget {
               const SizedBox(height: 8),
 
               // Organizer name
-              FutureBuilder<User?>(
+              FutureBuilder<BaseUser?>(
                 future: context
-                    .read<UserRepository>()
-                    .fetchUserById(event.organizerId),
+                    .read<BaseUserRepository>()
+                    .tryFetchById(event.organizerId),
                 builder: (context, snapshot) {
                   final username = snapshot.data?.name ?? '...';
                   return Text(
