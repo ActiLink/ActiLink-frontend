@@ -74,7 +74,7 @@ class ApiService {
   }
 
   Exception _handleDioError(DioException e, String method, String endpoint) {
-    log('Dio $method $endpoint: ${e.message}\nResponse: ${e.response?.data}');
+    //log('Dio $method $endpoint: ${e.message}\nResponse: ${e.response?.data}');
     final response = e.response;
 
     if (response != null) {
@@ -86,8 +86,10 @@ class ApiService {
         errorMessage = responseData['message'] as String? ??
             responseData['error'] as String? ??
             'Server error without specific message.';
-      } else if (responseData is String && responseData.isNotEmpty) {
-        errorMessage = responseData;
+      } else if (responseData is List &&
+          responseData.isNotEmpty &&
+          responseData[0] is String) {
+        errorMessage = responseData[0] as String;
       }
 
       if (statusCode == 401) {

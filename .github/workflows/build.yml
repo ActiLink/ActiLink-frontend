@@ -17,6 +17,9 @@ jobs:
 
     - name: Prepare environment
       uses: ./.github/actions/prepare_env
+      with:
+        ENV_FILE: apps/actilink/.env
+        GOOGLE_MAPS_API: ${{ secrets.GOOGLE_MAPS_API }}
 
     - name: Build Android APK
       run: melos run build:android:apk

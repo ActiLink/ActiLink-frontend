@@ -1,4 +1,5 @@
 import 'package:actilink/app/environment.dart';
+import 'package:actilink/app/view/app_startup.dart';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
@@ -25,15 +26,10 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (context) => ApiService(baseUrl: 'http://10.0.2.2:5289/')
-            ..addInterceptor(
-              AuthInterceptor(
-                tokenRepository: context.read<AuthTokenRepository>(),
-              ),
-            ),
+          create: (context) => ApiService(baseUrl: 'https://10.0.2.2:5289/'),
         ),
         RepositoryProvider(
-          create: (context) => UserRepository(
+          create: (context) => BaseUserRepository(
             apiService: context.read<ApiService>(),
           ),
         ),
@@ -51,7 +47,7 @@ class App extends StatelessWidget {
           create: (context) => AuthService(
             apiService: context.read<ApiService>(),
             tokenRepository: context.read<AuthTokenRepository>(),
-            userRepository: context.read<UserRepository>(),
+            baseUserRepository: context.read<BaseUserRepository>(),
           ),
         ),
         RepositoryProvider(
@@ -64,30 +60,32 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => AuthCubit(
               authService: context.read<AuthService>(),
-            )..checkAuthStatus(),
+            ),
           ),
           BlocProvider(
             create: (context) => EventsCubit(
               eventRepository: context.read<EventRepository>(),
-            )..fetchEvents(),
+            ),
           ),
           BlocProvider(
             create: (context) => HobbiesCubit(
               hobbyRepository: context.read<HobbyRepository>(),
-            )..fetchHobbies(),
+            ),
           ),
         ],
-        child: MaterialApp.router(
-          routerConfig: appRouter,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            appBarTheme: AppBarTheme(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        child: AppStartup(
+          child: MaterialApp.router(
+            routerConfig: appRouter,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              appBarTheme: AppBarTheme(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              useMaterial3: true,
             ),
-            useMaterial3: true,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           ),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
         ),
       ),
     );

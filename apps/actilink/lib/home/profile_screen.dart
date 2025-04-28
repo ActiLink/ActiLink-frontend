@@ -21,8 +21,8 @@ class ProfileScreen extends StatelessWidget {
               child: Icon(Icons.person, size: 50, color: AppColors.white),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Username',
+            Text(
+              context.read<AuthCubit>().user?.name ?? 'Username',
               style: AppTextStyles.displayMedium,
             ),
             const SizedBox(height: 10),

@@ -1,10 +1,10 @@
-import 'package:equatable/equatable.dart';
+import 'package:core/src/models/base_user.dart';
 
-class User extends Equatable {
+class User extends BaseUser {
   const User({
-    required this.id,
-    required this.name,
-    required this.email,
+    required super.id,
+    required super.name,
+    required super.email,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -13,18 +13,6 @@ class User extends Equatable {
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
     );
-  }
-
-  final String id;
-  final String name;
-  final String email;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-    };
   }
 
   User copyWith({
@@ -38,7 +26,4 @@ class User extends Equatable {
       email: email ?? this.email,
     );
   }
-
-  @override
-  List<Object?> get props => [id, name, email];
 }

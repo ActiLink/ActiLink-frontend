@@ -7,38 +7,22 @@ import 'package:synchronized/synchronized.dart';
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({
     required AuthTokenRepository tokenRepository,
-  }) : _tokenRepository = tokenRepository;
+    required AuthService authService,
+  })  : _tokenRepository = tokenRepository,
+        _authService = authService;
 
   final AuthTokenRepository _tokenRepository;
+  final AuthService _authService;
   final Lock _refreshLock = Lock();
   bool _isRefreshing = false;
 
   final List<String> _publicPaths = [
     '/Users/login',
     '/Users/register',
-    '/Users/token',
+    '/BusinessClients/login',
+    '/BusinessClients/register',
+    '/Auth/refresh',
   ];
-
-  Future<void> _refreshToken(String baseUrl) async {
-    final refreshToken = (await _tokenRepository.getToken())?.refreshToken;
-    if (refreshToken != null) {
-      try {
-        final response = await Dio().post<Map<String, dynamic>>(
-          '$baseUrl/Users/token',
-          data: {'refreshToken': refreshToken},
-        );
-        if (response.statusCode == 200) {
-          final newToken = AuthToken.fromJson(response.data!);
-          await _tokenRepository.saveToken(newToken);
-          log('Interceptor: Token refreshed successfully.');
-        } else {
-          log('Interceptor: Failed to refresh token. Status code: ${response.statusCode}');
-        }
-      } catch (e) {
-        log('Interceptor: Error refreshing token: $e');
-      }
-    }
-  }
 
   @override
   Future<void> onRequest(
@@ -58,7 +42,7 @@ class AuthInterceptor extends Interceptor {
             await _refreshLock.synchronized(() async {
               final currentToken = await _tokenRepository.getToken();
               if (currentToken != null && currentToken.isExpired) {
-                await _refreshToken(options.baseUrl);
+                await _authService.refreshToken();
               }
             });
 

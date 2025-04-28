@@ -1,6 +1,16 @@
 name: Setup environment
 description: Setup environment for Flutter project
 
+inputs:
+  ENV_FILE:
+    description: "Path to the .env file"
+    required: false
+    default: ""
+  GOOGLE_MAPS_API:
+    description: "Google Maps API key"
+    required: false
+    default: ""
+
 runs:
   using: composite
   steps:
@@ -17,9 +27,19 @@ runs:
         flutter-version: 3.29.1
         channel: "stable"
         cache: true
-        cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-        cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
+        cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+        cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
         architecture: x64
 
     - name: Install Melos
       uses: bluefireteam/melos-action@v3
+
+    - name: Create .env file
+      if: ${{ inputs.ENV_FILE != '' }}
+      env:
+        ENV_FILE: ${{ inputs.ENV_FILE }}
+        GOOGLE_MAPS_API: ${{ inputs.GOOGLE_MAPS_API }}
+      run: |
+        touch "$ENV_FILE"
+        echo "GOOGLE_MAPS_API=$GOOGLE_MAPS_API" >> "$ENV_FILE"
+      shell: bash
