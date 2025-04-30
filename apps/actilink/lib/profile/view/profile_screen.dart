@@ -1,5 +1,6 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/ui.dart';
 
@@ -22,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              context.read<AuthCubit>().user?.name ?? 'Username',
+              context.watch<AuthCubit>().user?.name ?? 'Username',
               style: AppTextStyles.displayMedium,
             ),
             const SizedBox(height: 10),
@@ -33,7 +34,9 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.push('/profile/edit');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.brand,
                 shape: RoundedRectangleBorder(

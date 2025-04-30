@@ -4,7 +4,6 @@ import 'package:actilink/auth/view/login_modal.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ui/ui.dart';
 
 class RegisterModal extends StatefulWidget {
@@ -31,8 +30,6 @@ class _RegisterModalState extends State<RegisterModal> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          if (Navigator.canPop(context)) Navigator.pop(context);
-          context.go('/home');
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
