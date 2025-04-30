@@ -45,4 +45,7 @@ class User extends BaseUser {
       'hobbies': hobbies?.map((h) => h.toJson()).toList(),
     };
   }
+
+  @override
+  List<Object?> get props => [...super.props, hobbies];
 }
