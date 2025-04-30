@@ -7,12 +7,22 @@ import 'package:actilink/events/view/post_event_screen.dart';
 import 'package:actilink/events/view/widgets/event_form.dart';
 import 'package:actilink/home/home_screen.dart';
 import 'package:actilink/home/main_shell.dart';
-import 'package:actilink/home/profile_screen.dart';
+import 'package:actilink/profile/view/edit_hobbies_screen.dart';
+import 'package:actilink/profile/view/edit_profile_screen.dart';
+import 'package:actilink/profile/view/profile_screen.dart';
 import 'package:core/core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+// Create a navigation key
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'shell');
+
 final GoRouter appRouter = GoRouter(
+  navigatorKey: _rootNavigatorKey,
   initialLocation: '/home',
   redirect: (context, state) {
     final authState = context.read<AuthCubit>().state;
@@ -36,6 +46,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const WelcomeScreen(),
     ),
     ShellRoute(
+      navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) => MainShell(child: child),
       routes: [
         GoRoute(
@@ -48,6 +59,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: 'details/:id',
+              parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) {
                 final event = state.extra! as Event;
                 return EventDetailsScreen(event: event);
@@ -55,6 +67,7 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: 'edit/:id',
+              parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) {
                 final event = state.extra as Event?;
                 return EventForm(
@@ -76,6 +89,20 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/profile',
           builder: (context, state) => const ProfileScreen(),
+          routes: [
+            GoRoute(
+              path: 'edit',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) => const EditProfileScreen(),
+              routes: [
+                GoRoute(
+                  path: 'hobbies',
+                  builder: (context, state) =>
+                      const EditHobbiesScreen(), // placeholder
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     ),

@@ -65,15 +65,6 @@ class _AppStartupState extends State<AppStartup> {
       );
     }
 
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        if (state is AuthAuthenticated) {
-          // Fetch data whenever auth state changes to authenticated
-          context.read<EventsCubit>().fetchEvents();
-          context.read<HobbiesCubit>().fetchHobbies();
-        }
-      },
-      child: widget.child,
-    );
+    return widget.child;
   }
 }
