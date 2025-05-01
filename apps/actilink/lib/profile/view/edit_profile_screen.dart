@@ -246,7 +246,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         Text(
                           'Your Hobbies',
-                          style: AppTextStyles.labelMedium.copyWith(color: AppColors.textPrimary),
+                          style: AppTextStyles.labelMedium
+                              .copyWith(color: AppColors.textPrimary),
                         ),
                         const SizedBox(height: 8),
                         if (_selectedHobbies.isNotEmpty)
@@ -260,16 +261,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   label: Text(hobby.name),
                                   onDeleted: () {
                                     setState(() {
-                                      _selectedHobbies.removeWhere((h) => h.id == hobby.id);
+                                      _selectedHobbies
+                                          .removeWhere((h) => h.id == hobby.id);
                                       _filterHobbies();
                                     });
                                   },
                                   backgroundColor: AppColors.accent,
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
                                   ),
-                                  labelStyle: AppTextStyles.labelMedium.copyWith(color: AppColors.highlight),
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  labelStyle: AppTextStyles.labelMedium
+                                      .copyWith(color: AppColors.highlight),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                   deleteIconColor: AppColors.highlight,
                                 );
                               }).toList(),
@@ -306,12 +311,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     });
                                   },
                                   backgroundColor: AppColors.surface,
-                                  side: const BorderSide(color: AppColors.border),
+                                  side:
+                                      const BorderSide(color: AppColors.border),
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
                                   ),
-                                  labelStyle: AppTextStyles.labelMedium.copyWith(color: AppColors.textPrimary),
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  labelStyle: AppTextStyles.labelMedium
+                                      .copyWith(color: AppColors.textPrimary),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                   avatar: const Icon(
                                     Icons.add,
                                     size: 16,

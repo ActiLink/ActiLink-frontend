@@ -2,7 +2,6 @@ import 'package:core/src/models/base_user.dart';
 import 'package:core/src/models/hobby.dart';
 
 class User extends BaseUser {
-  final List<Hobby>? hobbies;
 
   const User({
     required super.id,
@@ -21,6 +20,7 @@ class User extends BaseUser {
           .toList(),
     );
   }
+  final List<Hobby>? hobbies;
 
   User copyWith({
     String? id,
