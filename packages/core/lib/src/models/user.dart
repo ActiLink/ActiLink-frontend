@@ -2,7 +2,6 @@ import 'package:core/src/models/base_user.dart';
 import 'package:core/src/models/hobby.dart';
 
 class User extends BaseUser {
-
   const User({
     required super.id,
     required super.name,
