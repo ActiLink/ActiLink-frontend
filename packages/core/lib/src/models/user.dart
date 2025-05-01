@@ -19,6 +19,7 @@ class User extends BaseUser {
           .toList(),
     );
   }
+
   final List<Hobby>? hobbies;
 
   User copyWith({
