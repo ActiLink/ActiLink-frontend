@@ -26,7 +26,8 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (context) => ApiService(baseUrl: 'https://10.0.2.2:5289/'),
+          create: (context) =>
+              ApiService(baseUrl: 'https://10.0.2.2:5289/', apiVersion: 'v1'),
         ),
         RepositoryProvider(
           create: (context) => BaseUserRepository(

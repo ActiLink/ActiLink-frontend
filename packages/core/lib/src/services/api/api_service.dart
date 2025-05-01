@@ -4,7 +4,8 @@ import 'package:dio/dio.dart';
 part 'package:core/src/services/api/api_exceptions.dart';
 
 class ApiService {
-  ApiService({required String baseUrl}) {
+  ApiService({required String baseUrl, required String apiVersion})
+      : _apiVersion = apiVersion {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -15,7 +16,17 @@ class ApiService {
     );
   }
 
+  final String _apiVersion;
   late final Dio _dio;
+  late final String _apiPrefix = '/api/$_apiVersion';
+
+  String _getUrl(String endpoint) {
+    if (endpoint.startsWith('/')) {
+      return '$_apiPrefix$endpoint';
+    } else {
+      return '$_apiPrefix/$endpoint';
+    }
+  }
 
   void addInterceptor(Interceptor interceptor) {
     if (!_dio.interceptors.contains(interceptor)) {
@@ -25,7 +36,7 @@ class ApiService {
 
   Future<dynamic> getData(String endpoint) async {
     try {
-      final response = await _dio.get<dynamic>(endpoint);
+      final response = await _dio.get<dynamic>(_getUrl(endpoint));
       return response.data;
     } on DioException catch (e) {
       throw _handleDioError(e, 'GET', endpoint);
@@ -37,7 +48,7 @@ class ApiService {
 
   Future<dynamic> postData(String endpoint, Map<String, dynamic> data) async {
     try {
-      final response = await _dio.post<dynamic>(endpoint, data: data);
+      final response = await _dio.post<dynamic>(_getUrl(endpoint), data: data);
       return response.data;
     } on DioException catch (e) {
       throw _handleDioError(e, 'POST', endpoint);
@@ -49,7 +60,7 @@ class ApiService {
 
   Future<dynamic> putData(String endpoint, Map<String, dynamic> data) async {
     try {
-      final response = await _dio.put<dynamic>(endpoint, data: data);
+      final response = await _dio.put<dynamic>(_getUrl(endpoint), data: data);
       return response.data;
     } on DioException catch (e) {
       throw _handleDioError(e, 'PUT', endpoint);
@@ -61,7 +72,7 @@ class ApiService {
 
   Future<void> deleteData(String endpoint) async {
     try {
-      await _dio.delete<dynamic>(endpoint);
+      await _dio.delete<dynamic>(_getUrl(endpoint));
     } on DioException catch (e) {
       if (e.response?.statusCode == HttpStatus.noContent) {
         return;
@@ -74,7 +85,7 @@ class ApiService {
   }
 
   Exception _handleDioError(DioException e, String method, String endpoint) {
-    //log('Dio $method $endpoint: ${e.message}\nResponse: ${e.response?.data}');
+    // log('Dio $method $endpoint: ${e.message}\nResponse: ${e.response?.data}');
     final response = e.response;
 
     if (response != null) {

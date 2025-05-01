@@ -1,17 +1,20 @@
-class Hobby {
-  Hobby({
-    required this.id,
+import 'package:equatable/equatable.dart';
+
+class Hobby extends Equatable {
+  const Hobby({
     required this.name,
   });
 
   factory Hobby.fromJson(Map<String, dynamic> json) => Hobby(
-        id: json['id'] as String,
         name: json['name'] as String,
       );
-  final String id;
+
   final String name;
 
-  Map<String, dynamic> toNewOrUpdateJson() => {
+  Map<String, dynamic> toJson() => {
         'name': name,
       };
+
+  @override
+  List<Object?> get props => [name];
 }

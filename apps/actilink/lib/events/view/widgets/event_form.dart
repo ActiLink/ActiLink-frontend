@@ -409,7 +409,7 @@ class EventFormState extends State<EventForm> {
                                 onDeleted: () {
                                   setState(() {
                                     _selectedHobbies.removeWhere(
-                                      (h) => h.id == hobby.id,
+                                      (h) => h == hobby,
                                     );
                                     _filterHobbies();
                                   });
@@ -551,9 +551,8 @@ class EventFormState extends State<EventForm> {
         return;
       }
 
+      // --- Create Event Data ---
       final eventData = Event(
-        id: widget.event?.id ?? '',
-        organizerId: widget.event?.organizerId ?? currentUser!.id,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         location: eventLocation!,
@@ -563,7 +562,6 @@ class EventFormState extends State<EventForm> {
         startTime: _startTime,
         endTime: _endTime,
         hobbies: _selectedHobbies,
-        participants: widget.event?.participants ?? [],
       );
 
       var success = false;
@@ -580,7 +578,7 @@ class EventFormState extends State<EventForm> {
           log('Attempting to update event ${widget.event!.id}...');
           resultEvent = await context
               .read<EventsCubit>()
-              .updateEvent(widget.event!.id, eventData);
+              .updateEvent(widget.event!.id!, eventData);
           success = resultEvent != null;
         }
 
