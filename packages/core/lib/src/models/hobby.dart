@@ -1,18 +1,15 @@
 class Hobby {
-  Hobby({
-    required this.id,
+  const Hobby({
     required this.name,
   });
 
   factory Hobby.fromJson(Map<String, dynamic> json) => Hobby(
-        id: json['id'] as String,
-        name: json['name'] as String,
+        name: json['name'] as String? ?? '',
       );
-  final String id;
+
   final String name;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
         'name': name,
       };
 
