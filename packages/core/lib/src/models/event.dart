@@ -1,25 +1,59 @@
 import 'package:core/src/models.dart';
 
+class EventOrganizer {
+  const EventOrganizer({
+    required this.id,
+    required this.name,
+  });
+
+  factory EventOrganizer.fromJson(Map<String, dynamic> json) {
+    return EventOrganizer(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+    );
+  }
+
+  final String id;
+  final String name;
+}
+
+class EventParticipant {
+  const EventParticipant({
+    required this.id,
+    required this.name,
+  });
+
+  factory EventParticipant.fromJson(Map<String, dynamic> json) {
+    return EventParticipant(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+    );
+  }
+
+  final String id;
+  final String name;
+}
+
 class Event {
   const Event({
-    required this.id,
-    required this.organizerId,
+    required this.title,
+    required this.description,
     required this.startTime,
     required this.endTime,
     required this.location,
     required this.price,
     required this.minUsers,
     required this.maxUsers,
-    this.title,
-    this.description,
-    this.participants = const [],
-    this.hobbies = const [],
+    required this.hobbies,
+    this.id,
+    this.organizer,
+    this.participants,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final participantsJson = json['participants'] as List<dynamic>? ?? [];
     final participantsList = participantsJson
-        .map((p) => User.fromJson(p as Map<String, dynamic>))
+        .map((p) => EventParticipant.fromJson(p as Map<String, dynamic>))
         .toList();
 
     final hobbiesJson = json['hobbies'] as List<dynamic>? ?? [];
@@ -35,9 +69,8 @@ class Event {
 
     return Event(
       id: json['id'] as String? ?? '',
-      organizerId: json['organizerId'] as String? ?? '',
-      title: json['title'] as String?,
-      description: json['description'] as String?,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       startTime: DateTime.parse(
         json['startTime'] as String? ?? DateTime.now().toIso8601String(),
       ),
@@ -50,23 +83,26 @@ class Event {
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       minUsers: json['minUsers'] as int? ?? 1,
       maxUsers: json['maxUsers'] as int? ?? 0,
-      participants: participantsList,
       hobbies: hobbiesList,
+      organizer: EventOrganizer.fromJson(
+        json['organizer'] as Map<String, dynamic>? ?? {},
+      ),
+      participants: participantsList,
     );
   }
 
-  final String id;
-  final String organizerId;
-  final String? title;
-  final String? description;
+  final String? id;
+  final String title;
+  final String description;
   final DateTime startTime;
   final DateTime endTime;
   final Location location;
   final double price;
   final int minUsers;
   final int maxUsers;
-  final List<User> participants;
   final List<Hobby> hobbies;
+  final EventOrganizer? organizer;
+  final List<EventParticipant>? participants;
 
   Map<String, dynamic> toNewOrUpdateJson() {
     return {
@@ -78,7 +114,7 @@ class Event {
       'price': price,
       'minUsers': minUsers,
       'maxUsers': maxUsers,
-      'relatedHobbyIds': hobbies.map((hobby) => hobby.name).toList(),
+      'relatedHobbies': hobbies.map((hobby) => hobby.toJson()).toList(),
     };
   }
 
@@ -93,12 +129,12 @@ class Event {
     double? price,
     int? minUsers,
     int? maxUsers,
-    List<User>? participants,
     List<Hobby>? hobbies,
+    EventOrganizer? organizer,
+    List<EventParticipant>? participants,
   }) {
     return Event(
       id: id ?? this.id,
-      organizerId: organizerId ?? this.organizerId,
       title: title ?? this.title,
       description: description ?? this.description,
       startTime: startTime ?? this.startTime,
@@ -107,8 +143,9 @@ class Event {
       price: price ?? this.price,
       minUsers: minUsers ?? this.minUsers,
       maxUsers: maxUsers ?? this.maxUsers,
-      participants: participants ?? this.participants,
       hobbies: hobbies ?? this.hobbies,
+      organizer: organizer ?? this.organizer,
+      participants: participants ?? this.participants,
     );
   }
 }

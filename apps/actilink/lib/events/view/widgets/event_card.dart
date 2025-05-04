@@ -52,7 +52,7 @@ class EventCard extends StatelessWidget {
             children: [
               // Title
               Text(
-                event.title ?? 'Untitled Event',
+                event.title,
                 style: AppTextStyles.displayMedium.copyWith(
                   color: AppColors.textPrimary,
                   fontSize: 20,
@@ -64,22 +64,14 @@ class EventCard extends StatelessWidget {
               const SizedBox(height: 8),
 
               // Organizer name
-              FutureBuilder<BaseUser?>(
-                future: context
-                    .read<BaseUserRepository>()
-                    .tryFetchById(event.organizerId),
-                builder: (context, snapshot) {
-                  final username = snapshot.data?.name ?? '...';
-                  return Text(
-                    'Organized by $username',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  );
-                },
+              Text(
+                'Organized by ${event.organizer!.name}',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
 
               const SizedBox(height: 12),
