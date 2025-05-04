@@ -1,4 +1,5 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
+import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isSaving = false;
   bool _isBusinessClient = false;
   BaseUser? _currentUser;
+
+  final List<Hobby> _selectedHobbies = [];
+  List<Hobby> _filteredHobbies = [];
+  late TextEditingController _hobbySearchController;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -44,6 +50,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         text: _isBusinessClient ? (_currentUser! as BusinessClient).taxId : '',
       );
     }
+    _hobbySearchController = TextEditingController();
+    final user = context.read<AuthCubit>().user;
+    if (user is User && user.hobbies != null) {
+      _selectedHobbies.addAll(user.hobbies!);
+    }
+    _hobbySearchController.addListener(_filterHobbies);
+  }
+
+  void _filterHobbies() {
+    final query = _hobbySearchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredHobbies = [];
+        _isSearching = false;
+      } else {
+        _isSearching = true;
+        final allHobbies = context.read<HobbiesCubit>().state.hobbies;
+        _filteredHobbies = allHobbies
+            .where(
+              (hobby) =>
+                  hobby.name.toLowerCase().contains(query) &&
+                  !_selectedHobbies.contains(hobby),
+            )
+            .toList();
+      }
+    });
   }
 
   @override
@@ -104,6 +136,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         updatedUser = currentUser.copyWith(
           name: newName,
           email: newEmail,
+          hobbies: _selectedHobbies,
         );
       } else {
         throw Exception('Unknown user type');
@@ -124,17 +157,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  void _navigateToSetHobbies() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('Hobby selection screen coming soon!'),
-          backgroundColor: AppColors.info,
-        ),
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,13 +165,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.interests_outlined, color: AppColors.brand),
-            tooltip: 'Set Hobbies',
-            onPressed: _navigateToSetHobbies,
-          ),
-        ],
       ),
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -212,6 +227,126 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
 
+              // Hobbies section
+              if (!_isBusinessClient) ...[
+                const SizedBox(height: 24),
+                const _SectionHeader(title: 'Hobbies'),
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 2,
+                  color: AppColors.background,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Your Hobbies',
+                          style: AppTextStyles.labelMedium
+                              .copyWith(color: AppColors.textPrimary),
+                        ),
+                        const SizedBox(height: 8),
+                        if (_selectedHobbies.isNotEmpty)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 6,
+                              children: _selectedHobbies.map((hobby) {
+                                return Chip(
+                                  label: Text(hobby.name),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedHobbies.removeWhere(
+                                        (h) => h.name == hobby.name,
+                                      );
+                                      _filterHobbies();
+                                    });
+                                  },
+                                  backgroundColor: AppColors.accent,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  labelStyle: AppTextStyles.labelMedium
+                                      .copyWith(color: AppColors.highlight),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  deleteIconColor: AppColors.highlight,
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          label: 'Search Hobbies',
+                          hintText: 'Type to search hobbies',
+                          controller: _hobbySearchController,
+                          suffixIcon: _hobbySearchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _hobbySearchController.clear();
+                                  },
+                                )
+                              : null,
+                        ),
+                        const SizedBox(height: 8),
+                        if (_isSearching && _filteredHobbies.isNotEmpty)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 6,
+                              children: _filteredHobbies.map((hobby) {
+                                return ActionChip(
+                                  label: Text(hobby.name),
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedHobbies.add(hobby);
+                                      _filterHobbies();
+                                    });
+                                  },
+                                  backgroundColor: AppColors.surface,
+                                  side:
+                                      const BorderSide(color: AppColors.border),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  labelStyle: AppTextStyles.labelMedium
+                                      .copyWith(color: AppColors.textPrimary),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  avatar: const Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: AppColors.brand,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        if (_isSearching &&
+                            _filteredHobbies.isEmpty &&
+                            _hobbySearchController.text.isNotEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'No matching hobbies found.',
+                              style: AppTextStyles.bodySmall,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+
               // Business information section
               if (_isBusinessClient) ...[
                 const SizedBox(height: 24),
@@ -259,6 +394,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : const Text('Save Changes'),
                 ),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

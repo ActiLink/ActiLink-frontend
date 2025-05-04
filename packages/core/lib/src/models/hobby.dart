@@ -6,7 +6,7 @@ class Hobby extends Equatable {
   });
 
   factory Hobby.fromJson(Map<String, dynamic> json) => Hobby(
-        name: json['name'] as String,
+        name: json['name'] as String? ?? '',
       );
 
   final String name;

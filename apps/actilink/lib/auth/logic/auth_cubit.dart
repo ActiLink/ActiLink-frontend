@@ -245,9 +245,33 @@ class AuthCubit extends Cubit<AuthState> {
   // --- Update User ---
   Future<void> updateUserProfile(BaseUser updatedUser) async {
     if (state is AuthAuthenticated) {
-      log('AuthCubit: Updating user profile for ${updatedUser.id}');
-      // TODO(F1r3d3v): Implement the update user profile logic
-      emit(AuthAuthenticated(user: updatedUser));
+      final user = updatedUser;
+      log('AuthCubit: Updating user profile for ${user.id}');
+
+      try {
+        // Call the AuthService to update the user profile
+        if (user is User) {
+          final updatedUserProfile = await _authService.updateUserProfile(
+            user.id,
+            user.name,
+            user.email,
+            user.hobbies ?? List.empty(),
+          );
+          emit(AuthAuthenticated(user: updatedUserProfile));
+        } else if (user is BusinessClient) {
+          final updatedBusinessClient =
+              await _authService.updateBusinessClientProfile(
+            user.id,
+            user.name,
+            user.email,
+            user.taxId,
+          );
+          emit(AuthAuthenticated(user: updatedBusinessClient));
+        }
+      } catch (e) {
+        log('AuthCubit: Error updating profile: $e');
+        emit(const AuthFailure(error: 'Failed to update profile.'));
+      }
     } else {
       log('AuthCubit: Cannot update profile for unauthenticated user.');
       emit(
