@@ -89,4 +89,57 @@ class BaseUserRepository {
       rethrow;
     }
   }
+
+  Future<User> updateUser(
+    String userId,
+    String name,
+    String email,
+    List<Hobby> hobbies,
+  ) async {
+    try {
+      final uniqueHobbies =
+          {for (final hobby in hobbies) hobby.name: hobby}.values.toList();
+
+      final response = await _apiService.putData('/Users/$userId', {
+        'name': name,
+        'email': email,
+        'hobbies': uniqueHobbies.map((hobby) => {'name': hobby.name}).toList(),
+      });
+
+      if (response is Map<String, dynamic>) {
+        return User.fromJson(response);
+      } else {
+        throw ApiException(
+          'Invalid response format during user profile update',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<BusinessClient> updateBusinessClient(
+    String clientId,
+    String name,
+    String email,
+    String taxId,
+  ) async {
+    try {
+      final response = await _apiService.putData('/BusinessClients/$clientId', {
+        'name': name,
+        'email': email,
+        'taxId': taxId,
+      });
+
+      if (response is Map<String, dynamic>) {
+        return BusinessClient.fromJson(response);
+      } else {
+        throw ApiException(
+          'Invalid response format during business client profile update',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

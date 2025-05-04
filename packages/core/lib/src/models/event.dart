@@ -78,7 +78,7 @@ class Event {
       'price': price,
       'minUsers': minUsers,
       'maxUsers': maxUsers,
-      'relatedHobbyIds': hobbies.map((hobby) => hobby.id).toList(),
+      'relatedHobbyIds': hobbies.map((hobby) => hobby.name).toList(),
     };
   }
 
