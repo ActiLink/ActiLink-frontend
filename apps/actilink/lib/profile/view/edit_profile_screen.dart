@@ -261,8 +261,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   label: Text(hobby.name),
                                   onDeleted: () {
                                     setState(() {
-                                      _selectedHobbies
-                                          .removeWhere((h) => h.id == hobby.id);
+                                      _selectedHobbies.removeWhere(
+                                        (h) => h.name == hobby.name,
+                                      );
                                       _filterHobbies();
                                     });
                                   },

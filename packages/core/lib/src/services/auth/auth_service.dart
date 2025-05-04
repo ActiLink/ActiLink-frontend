@@ -238,4 +238,35 @@ class AuthService {
   void dispose() {
     _userStreamController.close();
   }
+
+  Future<User> updateUserProfile(
+    String userId,
+    String name,
+    String email,
+    List<Hobby> hobbies,
+  ) async {
+    try {
+      return await _baseUserRepository.updateUser(userId, name, email, hobbies);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<BusinessClient> updateBusinessClientProfile(
+    String clientId,
+    String name,
+    String email,
+    String taxId,
+  ) async {
+    try {
+      return await _baseUserRepository.updateBusinessClient(
+        clientId,
+        name,
+        email,
+        taxId,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

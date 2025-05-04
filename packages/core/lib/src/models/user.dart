@@ -8,14 +8,20 @@ class User extends BaseUser {
     required super.email,
     this.hobbies,
   });
-
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
       hobbies: (json['hobbies'] as List<dynamic>?)
-          ?.map((e) => Hobby.fromJson(e as Map<String, dynamic>))
+          ?.map((e) {
+            try {
+              return Hobby.fromJson(e as Map<String, dynamic>);
+            } catch (err) {
+              return null;
+            }
+          })
+          .whereType<Hobby>()
           .toList(),
     );
   }

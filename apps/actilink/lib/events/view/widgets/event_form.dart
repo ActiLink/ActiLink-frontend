@@ -409,7 +409,7 @@ class EventFormState extends State<EventForm> {
                                 onDeleted: () {
                                   setState(() {
                                     _selectedHobbies.removeWhere(
-                                      (h) => h.id == hobby.id,
+                                      (h) => h.name == hobby.name,
                                     );
                                     _filterHobbies();
                                   });
