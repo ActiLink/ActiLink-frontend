@@ -1,4 +1,5 @@
 import 'package:actilink/auth/logic/auth_cubit.dart';
+import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +144,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       await authCubit.updateUserProfile(updatedUser);
+
+      if (authCubit.state is AuthFailure) {
+        _showErrorSnackBar('Failed to update profile.');
+        authCubit.resetAuthStateAfterFailure();
+        return;
+      }
 
       _showSuccessSnackBar('Profile updated successfully!');
       if (mounted && Navigator.canPop(context)) {
