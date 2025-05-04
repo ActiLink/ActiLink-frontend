@@ -1,4 +1,6 @@
-class Hobby {
+import 'package:equatable/equatable.dart';
+
+class Hobby extends Equatable {
   const Hobby({
     required this.name,
   });
@@ -13,7 +15,6 @@ class Hobby {
         'name': name,
       };
 
-  Map<String, dynamic> toNewOrUpdateJson() => {
-        'name': name,
-      };
+  @override
+  List<Object?> get props => [name];
 }

@@ -5,7 +5,7 @@ import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
-import 'package:core/core.dart'; // Includes models, services
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +24,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   late Event _currentEvent;
   final NumberFormat _currencyFormat =
       NumberFormat.simpleCurrency(locale: 'en_US');
-  BaseUser? _organizer;
   String _formattedLocation = 'Loading location...';
   bool _isDeleting = false;
 
@@ -32,7 +31,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   void initState() {
     super.initState();
     _currentEvent = widget.event;
-    _fetchOrganizerDetailsIfNeeded();
     _fetchFormattedLocation();
   }
 
@@ -42,28 +40,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     if (widget.event != oldWidget.event) {
       setState(() {
         _currentEvent = widget.event;
-        _organizer = null;
         _formattedLocation = 'Loading location...';
       });
-      _fetchOrganizerDetailsIfNeeded();
       _fetchFormattedLocation();
-    }
-  }
-
-  Future<void> _fetchOrganizerDetailsIfNeeded() async {
-    if (_currentEvent.organizerId.isNotEmpty) {
-      try {
-        final userRepo = RepositoryProvider.of<BaseUserRepository>(context);
-        final organizer =
-            await userRepo.tryFetchById(_currentEvent.organizerId);
-        if (mounted) {
-          setState(() {
-            _organizer = organizer;
-          });
-        }
-      } catch (e) {
-        log('Error fetching organizer details: $e');
-      }
     }
   }
 
@@ -102,7 +81,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           ? (cubit.state as AuthAuthenticated).user
           : null,
     );
-    final isOrganizer = currentUser?.id == _currentEvent.organizerId;
+    final isOrganizer = currentUser?.id == _currentEvent.organizer!.id;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -146,7 +125,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _currentEvent.title ?? 'Event Details',
+                          _currentEvent.title,
                           style: AppTextStyles.displayMedium.copyWith(
                             fontSize: 22,
                             color: AppColors.textPrimary,
@@ -155,22 +134,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           maxLines: 2,
                         ),
                         const SizedBox(height: 2),
-                        if (_organizer != null)
-                          Text(
-                            'Organized by ${_organizer!.name}',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          )
-                        else if (_currentEvent.organizerId.isNotEmpty)
-                          Text(
-                            'Loading organizer...',
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: AppColors.textSecondary),
+                        Text(
+                          'Organized by ${_currentEvent.organizer!.name}',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ],
                     ),
                   ),
@@ -259,7 +231,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     icon: Icons.groups_outlined,
                     label: 'Attending',
                     value:
-                        '${_currentEvent.participants.length} ${_currentEvent.participants.length == 1 ? "person" : "people"}', // Placeholder
+                        '${_currentEvent.participants!.length} ${_currentEvent.participants!.length == 1 ? "person" : "people"}',
                   ),
                 ],
               ),
@@ -267,12 +239,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               const SizedBox(height: 24),
 
               // Description Section
-              if (_currentEvent.description != null &&
-                  _currentEvent.description!.isNotEmpty)
+              if (_currentEvent.description.isNotEmpty)
                 _buildSection(
                   title: 'About this Event',
                   child: Text(
-                    _currentEvent.description!,
+                    _currentEvent.description,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                       height: 1.5,
@@ -300,7 +271,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             labelStyle: AppTextStyles.labelMedium.copyWith(
                               color: AppColors.white,
                               fontSize: 13,
-                            ), // Adjusted style
+                            ),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 4,
@@ -363,10 +334,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       log('Returned from Edit screen with updated event: ${result.title}');
       setState(() {
         _currentEvent = result;
-        _organizer = null;
         _formattedLocation = 'Loading location...';
       });
-      await _fetchOrganizerDetailsIfNeeded();
       await _fetchFormattedLocation();
 
       if (mounted) {
@@ -394,7 +363,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Delete Event?', style: AppTextStyles.labelMedium),
           content: Text(
-            'Are you sure you want to permanently delete "${_currentEvent.title ?? 'this event'}"? This action cannot be undone.',
+            'Are you sure you want to permanently delete "${_currentEvent.title}"? This action cannot be undone.',
             style: AppTextStyles.bodyMedium
                 .copyWith(color: AppColors.textSecondary),
           ),
@@ -426,7 +395,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     var success = false;
     String? errorMsg;
     try {
-      success = await context.read<EventsCubit>().deleteEvent(_currentEvent.id);
+      success =
+          await context.read<EventsCubit>().deleteEvent(_currentEvent.id!);
       if (!success && mounted) {
         errorMsg = context.read<EventsCubit>().state.error.isNotEmpty
             ? context.read<EventsCubit>().state.error
