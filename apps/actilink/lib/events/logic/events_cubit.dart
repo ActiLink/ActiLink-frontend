@@ -16,6 +16,7 @@ class EventsCubit extends Cubit<EventsState> {
     if (state.status == EventsStatus.loading) return;
     emit(state.copyWith(status: EventsStatus.loading, error: ''));
     try {
+      GeoLocationCacheService().clearCache();
       final events = await _eventRepository.getAllEvents();
       emit(state.copyWith(status: EventsStatus.success, events: events));
       log('Fetched ${events.length} events successfully.');
@@ -116,6 +117,82 @@ class EventsCubit extends Cubit<EventsState> {
         state.copyWith(
           status: EventsStatus.failure,
           error: 'An unexpected error occurred while deleting event.',
+        ),
+      );
+      return false;
+    }
+  }
+
+  Future<bool> enrollInEvent(String eventId, BaseUser user) async {
+    emit(state.copyWith(status: EventsStatus.loading));
+    try {
+      // TODO(F1r3d3v): Uncomment the following line when the API is ready
+      // await _eventRepository.enrollInEvent(eventId);
+      log('Successfully enrolled in event: $eventId');
+      final event = state.events.firstWhere((e) => e.id == eventId);
+      final updatedParticipants =
+          List<EventParticipant>.from(event.participants!)
+            ..add(EventParticipant.fromUser(user));
+      final updatedList = state.events.map((e) {
+        return e.id == eventId
+            ? event.copyWith(participants: updatedParticipants)
+            : e;
+      }).toList();
+      emit(state.copyWith(status: EventsStatus.success, events: updatedList));
+      return true;
+    } on ApiException catch (e) {
+      log('Error enrolling in event $eventId: $e');
+      emit(
+        state.copyWith(
+          status: EventsStatus.failure,
+          error: 'Failed to enroll in event: ${e.message}',
+        ),
+      );
+      return false;
+    } catch (e) {
+      log('Unexpected error enrolling in event $eventId: $e');
+      emit(
+        state.copyWith(
+          status: EventsStatus.failure,
+          error: 'An unexpected error occurred while enrolling in event.',
+        ),
+      );
+      return false;
+    }
+  }
+
+  Future<bool> withdrawFromEvent(String eventId, BaseUser user) async {
+    emit(state.copyWith(status: EventsStatus.loading));
+    try {
+      // TODO(F1r3d3v): Uncomment the following line when the API is ready
+      // await _eventRepository.withdrawFromEvent(eventId);
+      log('Successfully withdrew from event: $eventId');
+      final event = state.events.firstWhere((e) => e.id == eventId);
+      final updatedParticipants =
+          List<EventParticipant>.from(event.participants!)
+            ..removeWhere((p) => p.id == user.id);
+      final updatedList = state.events.map((e) {
+        return e.id == eventId
+            ? event.copyWith(participants: updatedParticipants)
+            : e;
+      }).toList();
+      emit(state.copyWith(status: EventsStatus.success, events: updatedList));
+      return true;
+    } on ApiException catch (e) {
+      log('Error withdrawing from event $eventId: $e');
+      emit(
+        state.copyWith(
+          status: EventsStatus.failure,
+          error: 'Failed to withdraw from event: ${e.message}',
+        ),
+      );
+      return false;
+    } catch (e) {
+      log('Unexpected error withdrawing from event $eventId: $e');
+      emit(
+        state.copyWith(
+          status: EventsStatus.failure,
+          error: 'An unexpected error occurred while withdrawing from event.',
         ),
       );
       return false;

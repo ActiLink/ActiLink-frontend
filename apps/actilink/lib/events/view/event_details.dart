@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:actilink/auth/logic/auth_cubit.dart';
-import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
@@ -26,6 +25,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       NumberFormat.simpleCurrency(locale: 'en_US');
   String _formattedLocation = 'Loading location...';
   bool _isDeleting = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -46,42 +46,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
   }
 
-  Future<void> _fetchFormattedLocation() async {
-    if (_currentEvent.location.latitude == 0 &&
-        _currentEvent.location.longitude == 0) {
-      if (mounted) {
-        setState(() => _formattedLocation = 'Location not specified');
-      }
-      return;
-    }
-
-    try {
-      final service = context.read<GoogleMapsService>();
-      final address = await service.reverseGeocode(_currentEvent.location);
-      if (mounted) {
-        setState(() {
-          _formattedLocation = address ?? 'Address unavailable';
-        });
-      }
-    } catch (e) {
-      log('Error reverse geocoding in EventDetails: $e');
-      if (mounted) {
-        setState(() {
-          _formattedLocation =
-              'Lat: ${_currentEvent.location.latitude.toStringAsFixed(4)}, Lon: ${_currentEvent.location.longitude.toStringAsFixed(4)}';
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.select(
-      (AuthCubit cubit) => cubit.state is AuthAuthenticated
-          ? (cubit.state as AuthAuthenticated).user
-          : null,
-    );
+    final currentUser = context.read<AuthCubit>().user;
     final isOrganizer = currentUser?.id == _currentEvent.organizer!.id;
+    final isBusinessClient = context.read<AuthCubit>().isBusinessClient;
+    final isEnrolled = _isUserEnrolled(currentUser);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -281,6 +251,53 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         .toList(),
                   ),
                 ),
+
+              // Enrollment/Withdrawal Buttons
+              if (!isOrganizer && !isBusinessClient)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Center(
+                    child: isEnrolled
+                        ? AppButton(
+                            onPressed: _isSubmitting
+                                ? () => {}
+                                : () => _withdrawFromEvent(currentUser!),
+                            type: ButtonType.danger,
+                            child: _isSubmitting
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Withdraw from Event',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                          )
+                        : AppButton(
+                            onPressed: _isSubmitting
+                                ? () => {}
+                                : () => _enrollInEvent(currentUser!),
+                            child: _isSubmitting
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Enroll in Event',
+                                  ),
+                          ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -321,6 +338,40 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     } else {
       return '$min - $max participants';
     }
+  }
+
+  Future<void> _fetchFormattedLocation() async {
+    if (_currentEvent.location.latitude == 0 &&
+        _currentEvent.location.longitude == 0) {
+      if (mounted) {
+        setState(() => _formattedLocation = 'Location not specified');
+      }
+      return;
+    }
+
+    try {
+      final service = context.read<GoogleMapsService>();
+      final address = await service.reverseGeocode(_currentEvent.location);
+
+      if (mounted) {
+        setState(() {
+          _formattedLocation = address ?? 'Address unavailable';
+        });
+      }
+    } catch (e) {
+      log('Error reverse geocoding in EventDetails: $e');
+      if (mounted) {
+        setState(() {
+          _formattedLocation =
+              'Lat: ${_currentEvent.location.latitude.toStringAsFixed(4)}, Lon: ${_currentEvent.location.longitude.toStringAsFixed(4)}';
+        });
+      }
+    }
+  }
+
+  bool _isUserEnrolled(BaseUser? user) {
+    return _currentEvent.participants!
+        .any((participant) => participant.id == user?.id);
   }
 
   // --- Actions ---
@@ -436,6 +487,121 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             backgroundColor: AppColors.error,
           ),
         );
+    }
+  }
+
+  Future<void> _enrollInEvent(BaseUser user) async {
+    if (_isSubmitting) return;
+
+    if (_currentEvent.maxUsers > 0 &&
+        _currentEvent.participants!.length >= _currentEvent.maxUsers) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Event has reached maximum capacity'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+    log('Enrolling in event ${_currentEvent.id}');
+
+    String? errorMsg;
+    try {
+      await context.read<EventsCubit>().enrollInEvent(_currentEvent.id!, user);
+
+      // Update the local event data to reflect enrollment
+      setState(() {
+        final participants = _currentEvent.participants ?? [];
+        if (!participants.any((p) => p.id == user.id)) {
+          final updatedParticipants = List<EventParticipant>.from(participants)
+            ..add(EventParticipant.fromUser(user));
+          _currentEvent =
+              _currentEvent.copyWith(participants: updatedParticipants);
+        }
+      });
+    } catch (e) {
+      log('Error during enrollment: $e');
+      errorMsg = 'Failed to enroll in event.';
+    }
+
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+
+      if (errorMsg == null) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Successfully enrolled in event!'),
+              backgroundColor: AppColors.success,
+              duration: Duration(seconds: 2),
+            ),
+          );
+      } else {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(errorMsg),
+              backgroundColor: AppColors.error,
+            ),
+          );
+      }
+    }
+  }
+
+  Future<void> _withdrawFromEvent(BaseUser user) async {
+    if (_isSubmitting) return;
+
+    setState(() => _isSubmitting = true);
+    log('Withdrawing from event ${_currentEvent.id}');
+
+    String? errorMsg;
+    try {
+      await context
+          .read<EventsCubit>()
+          .withdrawFromEvent(_currentEvent.id!, user);
+
+      // Update the local event data to reflect withdrawal
+      setState(() {
+        final participants = _currentEvent.participants ?? [];
+        final updatedParticipants = List<EventParticipant>.from(participants)
+          ..removeWhere((p) => p.id == user.id);
+        _currentEvent =
+            _currentEvent.copyWith(participants: updatedParticipants);
+      });
+    } catch (e) {
+      log('Error during withdrawal: $e');
+      errorMsg = 'Failed to withdraw from event.';
+    }
+
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+
+      if (errorMsg == null) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Successfully withdrew from event'),
+              backgroundColor: AppColors.success,
+              duration: Duration(seconds: 2),
+            ),
+          );
+      } else {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(errorMsg),
+              backgroundColor: AppColors.error,
+            ),
+          );
+      }
     }
   }
 }

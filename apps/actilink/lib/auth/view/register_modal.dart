@@ -37,7 +37,9 @@ class _RegisterModalState extends State<RegisterModal> {
             );
         } else if (state is AuthFailure) {
           errorMessage = state.error;
-          context.read<AuthCubit>().resetAuthStateAfterFailure();
+          context.read<AuthCubit>().resetAuthStateAfterFailure(
+                setState: const AuthUnauthenticated(),
+              );
         }
       },
       builder: (context, state) {

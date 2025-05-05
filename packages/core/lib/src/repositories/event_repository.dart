@@ -80,4 +80,24 @@ class EventRepository {
       rethrow;
     }
   }
+
+  Future<void> enrollInEvent(String eventId) async {
+    try {
+      log('Enrolling in event $eventId');
+      await _apiService.postData('/Events/$eventId/enroll', {});
+    } catch (e) {
+      log('enrollInEvent Error for ID $eventId: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> withdrawFromEvent(String eventId) async {
+    try {
+      log('Withdrawing from event $eventId');
+      await _apiService.deleteData('/Events/$eventId/withdraw');
+    } catch (e) {
+      log('withdrawFromEvent Error for ID $eventId: $e');
+      rethrow;
+    }
+  }
 }

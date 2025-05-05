@@ -1,6 +1,8 @@
+import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/events_state.dart';
 import 'package:actilink/events/view/widgets/event_card.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
@@ -8,8 +10,16 @@ import 'package:ui/ui.dart';
 class EventsScreen extends StatelessWidget {
   const EventsScreen({super.key});
 
+  bool _isUserEnrolled(BaseUser? user, Event event) {
+    if (user == null || event.participants == null) return false;
+    return event.participants!.any((participant) => participant.id == user.id);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final eventCubit = context.read<EventsCubit>();
+    final currentUser = context.read<AuthCubit>().user;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: BlocBuilder<EventsCubit, EventsState>(
@@ -46,8 +56,7 @@ class EventsScreen extends StatelessWidget {
                     ElevatedButton.icon(
                       icon: const Icon(Icons.refresh, size: 18),
                       label: const Text('Retry'),
-                      onPressed: () =>
-                          context.read<EventsCubit>().fetchEvents(),
+                      onPressed: eventCubit.fetchEvents,
                     ),
                   ],
                 ),
@@ -68,21 +77,23 @@ class EventsScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.refresh, size: 18),
                     label: const Text('Refresh'),
-                    onPressed: () => context.read<EventsCubit>().fetchEvents(),
+                    onPressed: eventCubit.fetchEvents,
                   ),
                 ],
               ),
             );
           } else {
             return RefreshIndicator(
-              onRefresh: () => context.read<EventsCubit>().fetchEvents(),
+              onRefresh: eventCubit.fetchEvents,
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: state.events.length,
                 itemBuilder: (context, index) {
                   final event = state.events[index];
+                  final isEnrolled = _isUserEnrolled(currentUser, event);
                   return EventCard(
                     event: event,
+                    isEnrolled: isEnrolled,
                   );
                 },
               ),
