@@ -14,6 +14,13 @@ class AuthCubit extends Cubit<AuthState> {
     _userSubscription = _authService.userStream.listen(_onUserChanged);
   }
 
+  @override
+  void emit(AuthState state) {
+    previousState = this.state;
+    super.emit(state);
+  }
+
+  AuthState? previousState;
   final AuthService _authService;
   StreamSubscription<BaseUser?>? _userSubscription;
   bool get isLoggedIn => state is AuthAuthenticated;
@@ -285,7 +292,7 @@ class AuthCubit extends Cubit<AuthState> {
   void resetAuthStateAfterFailure() {
     if (state is AuthFailure && !isClosed) {
       log('AuthCubit: Resetting state to unauthenticated after auth failure.');
-      emit(const AuthUnauthenticated());
+      emit(previousState ?? const AuthUnauthenticated());
     }
   }
 
