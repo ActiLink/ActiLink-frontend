@@ -81,20 +81,36 @@ class EventRepository {
     }
   }
 
-  Future<void> enrollInEvent(String eventId) async {
+  Future<Event> enrollInEvent(String eventId) async {
     try {
       log('Enrolling in event $eventId');
-      await _apiService.postData('/Events/$eventId/enroll', {});
+      final response = await _apiService.postData('/Events/$eventId/enroll');
+      if (response is Map<String, dynamic>) {
+        return Event.fromJson(response);
+      } else {
+        log('enrollInEvent: Unexpected response format for ID $eventId: $response');
+        throw ApiException(
+          'Invalid response format when enrolling in event $eventId.',
+        );
+      }
     } catch (e) {
       log('enrollInEvent Error for ID $eventId: $e');
       rethrow;
     }
   }
 
-  Future<void> withdrawFromEvent(String eventId) async {
+  Future<Event> withdrawFromEvent(String eventId) async {
     try {
       log('Withdrawing from event $eventId');
-      await _apiService.deleteData('/Events/$eventId/withdraw');
+      final response = await _apiService.postData('/Events/$eventId/withdraw');
+      if (response is Map<String, dynamic>) {
+        return Event.fromJson(response);
+      } else {
+        log('withdrawFromEvent: Unexpected response format for ID $eventId: $response');
+        throw ApiException(
+          'Invalid response format when withdrawing from event $eventId.',
+        );
+      }
     } catch (e) {
       log('withdrawFromEvent Error for ID $eventId: $e');
       rethrow;

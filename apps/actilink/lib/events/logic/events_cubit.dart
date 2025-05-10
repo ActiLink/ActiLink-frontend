@@ -126,17 +126,10 @@ class EventsCubit extends Cubit<EventsState> {
   Future<bool> enrollInEvent(String eventId, BaseUser user) async {
     emit(state.copyWith(status: EventsStatus.loading));
     try {
-      // TODO(F1r3d3v): Uncomment the following line when the API is ready
-      // await _eventRepository.enrollInEvent(eventId);
+      final event = await _eventRepository.enrollInEvent(eventId);
       log('Successfully enrolled in event: $eventId');
-      final event = state.events.firstWhere((e) => e.id == eventId);
-      final updatedParticipants =
-          List<EventParticipant>.from(event.participants!)
-            ..add(EventParticipant.fromUser(user));
       final updatedList = state.events.map((e) {
-        return e.id == eventId
-            ? event.copyWith(participants: updatedParticipants)
-            : e;
+        return e.id == eventId ? event : e;
       }).toList();
       emit(state.copyWith(status: EventsStatus.success, events: updatedList));
       return true;
@@ -164,17 +157,10 @@ class EventsCubit extends Cubit<EventsState> {
   Future<bool> withdrawFromEvent(String eventId, BaseUser user) async {
     emit(state.copyWith(status: EventsStatus.loading));
     try {
-      // TODO(F1r3d3v): Uncomment the following line when the API is ready
-      // await _eventRepository.withdrawFromEvent(eventId);
+      final event = await _eventRepository.withdrawFromEvent(eventId);
       log('Successfully withdrew from event: $eventId');
-      final event = state.events.firstWhere((e) => e.id == eventId);
-      final updatedParticipants =
-          List<EventParticipant>.from(event.participants!)
-            ..removeWhere((p) => p.id == user.id);
       final updatedList = state.events.map((e) {
-        return e.id == eventId
-            ? event.copyWith(participants: updatedParticipants)
-            : e;
+        return e.id == eventId ? event : e;
       }).toList();
       emit(state.copyWith(status: EventsStatus.success, events: updatedList));
       return true;
