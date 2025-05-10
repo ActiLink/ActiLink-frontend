@@ -1,6 +1,7 @@
 import 'package:core/src/models.dart';
+import 'package:equatable/equatable.dart';
 
-class EventOrganizer {
+class EventOrganizer extends Equatable {
   const EventOrganizer({
     required this.id,
     required this.name,
@@ -15,13 +16,23 @@ class EventOrganizer {
 
   final String id;
   final String name;
+
+  @override
+  List<Object?> get props => [id, name];
 }
 
-class EventParticipant {
+class EventParticipant extends Equatable {
   const EventParticipant({
     required this.id,
     required this.name,
   });
+
+  factory EventParticipant.fromUser(BaseUser user) {
+    return EventParticipant(
+      id: user.id,
+      name: user.name,
+    );
+  }
 
   factory EventParticipant.fromJson(Map<String, dynamic> json) {
     return EventParticipant(
@@ -32,9 +43,12 @@ class EventParticipant {
 
   final String id;
   final String name;
+
+  @override
+  List<Object?> get props => [id, name];
 }
 
-class Event {
+class Event extends Equatable {
   const Event({
     required this.title,
     required this.description,
@@ -148,4 +162,20 @@ class Event {
       participants: participants ?? this.participants,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        title,
+        description,
+        startTime,
+        endTime,
+        location,
+        price,
+        minUsers,
+        maxUsers,
+        hobbies,
+        organizer,
+        participants,
+      ];
 }
