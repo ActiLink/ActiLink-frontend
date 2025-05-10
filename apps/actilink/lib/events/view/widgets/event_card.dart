@@ -8,8 +8,14 @@ import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 class EventCard extends StatelessWidget {
-  const EventCard({required this.event, super.key});
+  const EventCard({
+    required this.event,
+    this.isEnrolled = false,
+    super.key,
+  });
+
   final Event event;
+  final bool isEnrolled;
 
   Future<String> _getFormattedLocation(
     BuildContext context,
@@ -50,15 +56,51 @@ class EventCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
-              Text(
-                event.title,
-                style: AppTextStyles.displayMedium.copyWith(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              // Title and enrolled badge row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    event.title,
+                    style: AppTextStyles.displayMedium.copyWith(
+                      color: AppColors.textPrimary,
+                      fontSize: 20,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  // Enrolled badge
+                  if (isEnrolled)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.success,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.check_circle_outline,
+                            color: AppColors.white,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Enrolled',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(height: 8),
@@ -148,8 +190,10 @@ class EventCard extends StatelessWidget {
                           label: Text(hobby.name),
                           backgroundColor:
                               AppColors.accent.withValues(alpha: 0.8),
-                          labelStyle: AppTextStyles.bodySmall
-                              .copyWith(color: AppColors.white, fontSize: 11),
+                          labelStyle: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.white,
+                            fontSize: 11,
+                          ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
                             vertical: 2,

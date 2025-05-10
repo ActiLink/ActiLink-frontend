@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:core/src/models/location.dart';
+import 'package:core/src/services.dart';
 import 'package:flutter_google_maps_webservices/geocoding.dart' as gmaps;
 
 class GoogleMapsService {
@@ -22,12 +23,20 @@ class GoogleMapsService {
       return 'Coordinates: ${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}';
     }
     try {
+      final cachedAddress =
+          GeoLocationCacheService().getCachedAddress(location);
+      if (cachedAddress != null) {
+        return cachedAddress;
+      }
+
       final response = await _geocoding.searchByLocation(
         gmaps.Location(lat: location.latitude, lng: location.longitude),
       );
 
       if (response.isOkay && response.results.isNotEmpty) {
-        return response.results.first.formattedAddress;
+        final address = response.results.first.formattedAddress!;
+        GeoLocationCacheService().cacheAddress(location, address);
+        return address;
       } else {
         log('Reverse Geocode Failed: ${response.status} - ${response.errorMessage}');
         return 'Address not found';
@@ -48,14 +57,26 @@ class GoogleMapsService {
       return null;
     }
     try {
+      final cachedLocation =
+          GeoLocationCacheService().getCachedLocation(address);
+      if (cachedLocation != null) {
+        return cachedLocation;
+      }
+
       final response = await _geocoding.searchByAddress(address);
 
       if (response.isOkay && response.results.isNotEmpty) {
         final geometry = response.results.first.geometry;
-        return Location(
+        final formattedAddress = response.results.first.formattedAddress!;
+        final location = Location(
           latitude: geometry.location.lat,
           longitude: geometry.location.lng,
         );
+        GeoLocationCacheService().cacheLocation(
+          formattedAddress,
+          location,
+        );
+        return location;
       } else {
         log('Forward Geocode Failed: ${response.status} - ${response.errorMessage}');
         return null;

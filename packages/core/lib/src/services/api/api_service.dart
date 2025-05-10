@@ -46,7 +46,10 @@ class ApiService {
     }
   }
 
-  Future<dynamic> postData(String endpoint, Map<String, dynamic> data) async {
+  Future<dynamic> postData(
+    String endpoint, [
+    Map<String, dynamic> data = const {},
+  ]) async {
     try {
       final response = await _dio.post<dynamic>(_getUrl(endpoint), data: data);
       return response.data;

@@ -289,10 +289,10 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void resetAuthStateAfterFailure() {
+  void resetAuthStateAfterFailure({AuthState? setState}) {
     if (state is AuthFailure && !isClosed) {
       log('AuthCubit: Resetting state to unauthenticated after auth failure.');
-      emit(previousState ?? const AuthUnauthenticated());
+      emit(setState ?? previousState ?? const AuthUnauthenticated());
     }
   }
 

@@ -15,6 +15,9 @@ enum ButtonType {
 
   /// An accent button with a standout brand color.
   accent,
+
+  /// A danger button with a red color.
+  danger,
 }
 
 /// A custom button widget used throughout the app, which supports
@@ -76,6 +79,7 @@ class AppButton extends StatelessWidget {
       ButtonType.primary => AppColors.highlight,
       ButtonType.secondary => AppColors.white,
       ButtonType.accent => AppColors.accent,
+      ButtonType.danger => AppColors.error,
       _ => AppColors.highlight,
     };
 
@@ -84,6 +88,7 @@ class AppButton extends StatelessWidget {
       ButtonType.primary => AppColors.black,
       ButtonType.secondary => AppColors.black,
       ButtonType.accent => AppColors.white,
+      ButtonType.danger => AppColors.white,
       _ => AppColors.black,
     };
 
