@@ -74,19 +74,19 @@ class VenuesScreen extends StatelessWidget {
                 ],
               ),
             );
-          } else {
-            return RefreshIndicator(
-              onRefresh: venuesCubit.fetchVenues,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: state.venues.length,
-                itemBuilder: (context, index) {
-                  final venue = state.venues[index];
-                  return VenueCard(venue: venue);
-                },
-              ),
-            );
           }
+
+          return RefreshIndicator(
+            onRefresh: venuesCubit.fetchVenues,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: state.venues.length,
+              itemBuilder: (context, index) {
+                final venue = state.venues[index];
+                return VenueCard(venue: venue);
+              },
+            ),
+          );
         },
       ),
     );

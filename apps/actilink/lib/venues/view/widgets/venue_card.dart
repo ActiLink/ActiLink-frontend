@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ui/ui.dart';
 
 class VenueCard extends StatelessWidget {
   const VenueCard({
@@ -12,10 +13,11 @@ class VenueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Card(
+      color: AppColors.white,
+      elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () => context.push('/venues/details/${venue.id}', extra: venue),
         child: Padding(
@@ -23,27 +25,80 @@ class VenueCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                venue.name,
-                style: theme.textTheme.titleMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    venue.name,
+                    style: AppTextStyles.displayMedium.copyWith(
+                      color: AppColors.textPrimary,
+                      fontSize: 20,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (venue.owner != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Owned by ${venue.owner!.name}',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                venue.description,
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                venue.address,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
-                ),
-              ),
-              if (venue.owner != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  'Owner: ${venue.owner!.name}',
-                  style: theme.textTheme.bodySmall,
+              if (venue.address.isNotEmpty || venue.events.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    if (venue.address.isNotEmpty)
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.place_outlined,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                venue.address,
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (venue.events.isNotEmpty) ...[
+                      if (venue.address.isNotEmpty)
+                        const SizedBox(width: 16),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.event_outlined,
+                            size: 16,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${venue.events.length} events',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ],
