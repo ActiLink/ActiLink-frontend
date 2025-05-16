@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:core/core.dart';
 
 class VenueRepository {
@@ -8,11 +9,47 @@ class VenueRepository {
   final ApiService _apiService;
 
   Future<List<Venue>> getAllVenues() async {
-    final response = await _apiService.getData('/venues');
-    final venuesJson = response as List;
-    return venuesJson
-        .map((json) => Venue.fromJson(json as Map<String, dynamic>))
-        .toList();
+    try {
+      final response = await _apiService.getData('/venues');
+      if (response is List) {
+        return response
+            .map(
+              (venueData) => Venue.fromJson(venueData as Map<String, dynamic>),
+            )
+            .toList();
+      } else {
+        log('getAllVenues: Unexpected response format: $response');
+        throw ApiException('Invalid response format when fetching venues.');
+      }
+    } catch (e) {
+      log('getAllVenues Error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Venue>> getVenues({
+    required int page,
+    required int pageSize,
+  }) async {
+    try {
+      final endpoint = '/venues?page=$page&pageSize=$pageSize';
+      log('Fetching venues: $endpoint');
+      final response = await _apiService.getData(endpoint);
+      
+      if (response is List) {
+        return response
+            .map(
+              (venueData) => Venue.fromJson(venueData as Map<String, dynamic>),
+            )
+            .toList();
+      } else {
+        log('getVenues: Unexpected response format: $response');
+        throw ApiException('Invalid response format when fetching paginated venues.');
+      }
+    } catch (e) {
+      log('getVenues Error: $e');
+      rethrow;
+    }
   }
 
   Future<Venue> getVenueById(String id) async {
