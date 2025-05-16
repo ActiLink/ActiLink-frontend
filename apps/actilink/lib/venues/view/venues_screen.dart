@@ -1,6 +1,7 @@
 import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:actilink/venues/logic/venues_state.dart';
 import 'package:actilink/venues/view/widgets/venue_card.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
@@ -76,19 +77,33 @@ class VenuesScreen extends StatelessWidget {
             );
           }
 
-          return RefreshIndicator(
-            onRefresh: venuesCubit.fetchVenues,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.venues.length,
-              itemBuilder: (context, index) {
-                final venue = state.venues[index];
-                return VenueCard(venue: venue);
-              },
+          return ScrollConfiguration(
+            behavior: DragScrollBehavior(),
+            child: RefreshIndicator(
+              onRefresh: venuesCubit.fetchVenues,
+              child: SizedBox.expand(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.venues.length,
+                  itemBuilder: (context, index) {
+                    final venue = state.venues[index];
+                    return VenueCard(venue: venue);
+                  },
+                ),
+              ),
             ),
           );
         },
       ),
     );
   }
+}
+
+class DragScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      };
 }

@@ -90,7 +90,7 @@ class VenueCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${venue.events.length} events',
+                            '${venue.events.length} ${venue.events.length == 1 ? 'event' : 'events'}',
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
                             ),

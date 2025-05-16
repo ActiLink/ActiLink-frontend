@@ -9,7 +9,7 @@ class VenueRepository {
 
   Future<List<Venue>> getAllVenues() async {
     final response = await _apiService.getData('/venues');
-    final List<dynamic> venuesJson = response as List;
+    final venuesJson = response as List;
     return venuesJson
         .map((json) => Venue.fromJson(json as Map<String, dynamic>))
         .toList();

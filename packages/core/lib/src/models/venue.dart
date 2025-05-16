@@ -70,8 +70,12 @@ class Venue extends Equatable {
     this.events = const [],
   });
 
-  factory Venue.fromJson(Map<String, dynamic> json) {
+factory Venue.fromJson(Map<String, dynamic> json) {
     final locationJson = json['location'] as Map<String, dynamic>?;
+    final eventsJson = json['events'] as List<dynamic>? ?? [];
+    final eventsList = eventsJson
+        .map((e) => Event.fromJson(e as Map<String, dynamic>))
+        .toList();
 
     return Venue(
       id: json['id'] as String? ?? '',
@@ -84,10 +88,9 @@ class Venue extends Equatable {
       owner: json['owner'] != null
           ? VenueOwner.fromJson(json['owner'] as Map<String, dynamic>)
           : null,
-      // Temporarily remove events mapping until Event.toJson is implemented
-      events: const [],
+      events: eventsList,
     );
-  }
+}
 
   final String id;
   final String name;
@@ -120,8 +123,7 @@ class Venue extends Equatable {
         'location': location.toJson(),
         'address': address,
         'owner': owner?.toJson(),
-        // Temporarily remove events mapping until Event.toJson is implemented
-        'events': [],
+        'events': events.map((e) => e.toJson()).toList(),
       };
 
   Venue copyWith({

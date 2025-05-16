@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
+import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,6 @@ class VenueDetailsScreen extends StatefulWidget {
 
 class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
   late Venue _currentVenue;
-  String _formattedLocation = 'Loading location...';
   bool _isDeleting = false;
 
   @override
@@ -104,7 +104,15 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                             color: AppColors.brand,
                           ),
                           tooltip: 'Edit Venue',
-                          onPressed: () {}, // TODO: Implement edit
+                          onPressed: () async {
+                            final result = await context.push<Venue>(
+                              '/venues/edit/${_currentVenue.id}',
+                              extra: _currentVenue,
+                            );
+                            if (result != null && mounted) {
+                              setState(() => _currentVenue = result);
+                            }
+                          },
                         ),
                         IconButton(
                           icon: _isDeleting
@@ -167,15 +175,26 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                     children: _currentVenue.events
                         .map((event) => Card(
                               margin: const EdgeInsets.only(bottom: 8),
+                              color: AppColors.surface, // Add white background
                               child: ListTile(
-                                title: Text(event.title),
-                                subtitle: Text(event.description),
+                                title: Text(
+                                  event.title,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  event.description,
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
                                 onTap: () => context.push(
                                   '/events/details/${event.id}',
                                   extra: event,
                                 ),
                               ),
-                            ))
+                            ),)
                         .toList(),
                   ),
                 ),
@@ -206,19 +225,16 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
 
   Future<void> _fetchFormattedLocation() async {
     try {
-      final service = context.read<GoogleMapsService>();
-      final address = await service.reverseGeocode(_currentVenue.location);
+      context.read<GoogleMapsService>();
 
       if (mounted) {
         setState(() {
-          _formattedLocation = address ?? _currentVenue.address;
         });
       }
     } catch (e) {
       log('Error reverse geocoding in VenueDetails: $e');
       if (mounted) {
         setState(() {
-          _formattedLocation = _currentVenue.address;
         });
       }
     }
@@ -256,6 +272,51 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
   }
 
   Future<void> _deleteVenue() async {
-    // TODO: Implement delete functionality
+    if (_isDeleting) return;
+
+    setState(() => _isDeleting = true);
+    log('Deleting venue ${_currentVenue.id}');
+
+    var success = false;
+    String? errorMsg;
+
+    try {
+      success = await context.read<VenuesCubit>().deleteVenue(_currentVenue.id);
+      if (!success && mounted) {
+        errorMsg = context.read<VenuesCubit>().state.error.isNotEmpty
+            ? context.read<VenuesCubit>().state.error
+            : 'Failed to delete venue.';
+      }
+    } catch (e) {
+      log('Error deleting venue: $e');
+      errorMsg = 'An unexpected error occurred while deleting the venue.';
+    }
+
+    if (!mounted) return;
+
+    setState(() => _isDeleting = false);
+
+    if (success) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Venue deleted successfully'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+      context.go('/venues');
+    } else {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(errorMsg ?? 'Failed to delete venue'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+    }
   }
 }

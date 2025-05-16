@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:actilink/venues/logic/venues_state.dart';
 import 'package:core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'venues_state.dart';
 
 class VenuesCubit extends Cubit<VenuesState> {
   VenuesCubit({required VenueRepository venueRepository})
@@ -63,47 +62,49 @@ class VenuesCubit extends Cubit<VenuesState> {
     }
   }
 
-  Future<Venue?> updateVenue(String venueId, Venue venue) async {
+  Future<bool> updateVenue(String id, Venue venue) async {
     emit(state.copyWith(status: VenuesStatus.loading));
     try {
-      final updatedVenue = await _venueRepository.updateVenue(venueId, venue);
-      log('Venue updated successfully: ${updatedVenue.name}');
-      final updatedList = state.venues.map((v) {
-        return v.id == venueId ? updatedVenue : v;
-      }).toList();
-      emit(state.copyWith(status: VenuesStatus.success, venues: updatedList));
-      return updatedVenue;
+      await _venueRepository.updateVenue(id, venue);
+      log('Venue updated successfully: ${venue.name}');
+      final venues = await _venueRepository.getAllVenues();
+      emit(state.copyWith(status: VenuesStatus.success, venues: venues));
+      return true;
     } on ApiException catch (e) {
-      log('Error updating venue $venueId: $e');
+      log('Error updating venue: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,
           error: 'Failed to update venue: ${e.message}',
         ),
       );
-      return null;
+      return false;
     } catch (e) {
-      log('Unexpected error updating venue $venueId: $e');
+      log('Unexpected error updating venue: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,
           error: 'An unexpected error occurred while updating venue.',
         ),
       );
-      return null;
+      return false;
     }
   }
 
-  Future<bool> deleteVenue(String venueId) async {
+  Future<bool> deleteVenue(String id) async {
     emit(state.copyWith(status: VenuesStatus.loading));
     try {
-      await _venueRepository.deleteVenue(venueId);
-      log('Venue deleted successfully: $venueId');
-      final updatedList = state.venues.where((v) => v.id != venueId).toList();
-      emit(state.copyWith(status: VenuesStatus.success, venues: updatedList));
+      await _venueRepository.deleteVenue(id);
+      log('Venue deleted successfully: $id');
+      final updatedVenues = state.venues.where((v) => v.id != id).toList();
+      emit(state.copyWith(
+        status: VenuesStatus.success,
+        venues: updatedVenues,
+        error: '',
+      ),);
       return true;
     } on ApiException catch (e) {
-      log('Error deleting venue $venueId: $e');
+      log('Error deleting venue: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,
@@ -112,7 +113,7 @@ class VenuesCubit extends Cubit<VenuesState> {
       );
       return false;
     } catch (e) {
-      log('Unexpected error deleting venue $venueId: $e');
+      log('Unexpected error deleting venue: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,

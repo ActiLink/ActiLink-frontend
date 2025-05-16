@@ -10,9 +10,9 @@ import 'package:actilink/home/main_shell.dart';
 import 'package:actilink/profile/view/edit_hobbies_screen.dart';
 import 'package:actilink/profile/view/edit_profile_screen.dart';
 import 'package:actilink/profile/view/profile_screen.dart';
-import 'package:actilink/venues/logic/venues_cubit.dart';
-import 'package:actilink/venues/view/venues_screen.dart';
+import 'package:actilink/venues/view/edit_venue_screen.dart';
 import 'package:actilink/venues/view/venue_details.dart';
+import 'package:actilink/venues/view/venues_screen.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,12 +77,7 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: '/venues',
-          builder: (context, state) => BlocProvider(
-            create: (context) => VenuesCubit(
-              venueRepository: context.read<VenueRepository>(),
-            )..fetchVenues(),
-            child: const VenuesScreen(),
-          ),
+          builder: (context, state) => const VenuesScreen(),
           routes: [
             GoRoute(
               path: 'details/:id',
@@ -90,6 +85,14 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) {
                 final venue = state.extra! as Venue;
                 return VenueDetailsScreen(venue: venue);
+              },
+            ),
+            GoRoute(
+              path: 'edit/:id',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final venue = state.extra! as Venue;
+                return EditVenueScreen(venue: venue);
               },
             ),
           ],
