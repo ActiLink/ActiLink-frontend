@@ -45,7 +45,7 @@ class VenueRepository {
       } else {
         log('getVenues: Unexpected response format: $response');
         throw ApiException(
-            'Invalid response format when fetching paginated venues.');
+            'Invalid response format when fetching paginated venues.',);
       }
     } catch (e) {
       log('getVenues Error: $e');
