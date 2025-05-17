@@ -35,7 +35,7 @@ class VenueRepository {
       final endpoint = '/venues?page=$page&pageSize=$pageSize';
       log('Fetching venues: $endpoint');
       final response = await _apiService.getData(endpoint);
-      
+
       if (response is List) {
         return response
             .map(
@@ -44,7 +44,8 @@ class VenueRepository {
             .toList();
       } else {
         log('getVenues: Unexpected response format: $response');
-        throw ApiException('Invalid response format when fetching paginated venues.');
+        throw ApiException(
+            'Invalid response format when fetching paginated venues.');
       }
     } catch (e) {
       log('getVenues Error: $e');

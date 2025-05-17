@@ -70,7 +70,7 @@ class Venue extends Equatable {
     this.events = const [],
   });
 
-factory Venue.fromJson(Map<String, dynamic> json) {
+  factory Venue.fromJson(Map<String, dynamic> json) {
     final locationJson = json['location'] as Map<String, dynamic>?;
     final eventsJson = json['events'] as List<dynamic>? ?? [];
     final eventsList = eventsJson
@@ -90,7 +90,7 @@ factory Venue.fromJson(Map<String, dynamic> json) {
           : null,
       events: eventsList,
     );
-}
+  }
 
   final String id;
   final String name;

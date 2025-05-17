@@ -23,7 +23,7 @@ class EditVenueScreen extends StatelessWidget {
         if (!context.mounted) return;
 
         context.pop(updatedVenue);
-            },
+      },
     );
   }
 }

@@ -97,11 +97,13 @@ class VenuesCubit extends Cubit<VenuesState> {
       await _venueRepository.deleteVenue(id);
       log('Venue deleted successfully: $id');
       final updatedVenues = state.venues.where((v) => v.id != id).toList();
-      emit(state.copyWith(
-        status: VenuesStatus.success,
-        venues: updatedVenues,
-        error: '',
-      ),);
+      emit(
+        state.copyWith(
+          status: VenuesStatus.success,
+          venues: updatedVenues,
+          error: '',
+        ),
+      );
       return true;
     } on ApiException catch (e) {
       log('Error deleting venue: $e');

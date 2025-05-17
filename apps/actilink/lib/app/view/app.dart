@@ -45,7 +45,7 @@ class App extends StatelessWidget {
             apiService: context.read<ApiService>(),
           ),
         ),
-                RepositoryProvider(
+        RepositoryProvider(
           create: (context) => VenueRepository(
             apiService: context.read<ApiService>(),
           ),
@@ -79,7 +79,7 @@ class App extends StatelessWidget {
               hobbyRepository: context.read<HobbyRepository>(),
             ),
           ),
-                    BlocProvider(
+          BlocProvider(
             create: (context) => VenuesCubit(
               venueRepository: context.read<VenueRepository>(),
             )..fetchVenues(),

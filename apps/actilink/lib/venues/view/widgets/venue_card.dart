@@ -79,8 +79,7 @@ class VenueCard extends StatelessWidget {
                         ),
                       ),
                     if (venue.events.isNotEmpty) ...[
-                      if (venue.address.isNotEmpty)
-                        const SizedBox(width: 16),
+                      if (venue.address.isNotEmpty) const SizedBox(width: 16),
                       Row(
                         children: [
                           const Icon(

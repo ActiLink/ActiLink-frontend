@@ -28,7 +28,8 @@ class _VenueFormState extends State<VenueForm> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.venue?.name);
-    _descriptionController = TextEditingController(text: widget.venue?.description);
+    _descriptionController =
+        TextEditingController(text: widget.venue?.description);
     _addressController = TextEditingController(text: widget.venue?.address);
   }
 
@@ -117,16 +118,17 @@ class _VenueFormState extends State<VenueForm> {
 
     try {
       final venue = widget.venue?.copyWith(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        address: _addressController.text,
-      ) ?? Venue(
-        id: '',
-        name: _nameController.text,
-        description: _descriptionController.text,
-        address: _addressController.text,
-        location: const Location(latitude: 0, longitude: 0),
-      );
+            name: _nameController.text,
+            description: _descriptionController.text,
+            address: _addressController.text,
+          ) ??
+          Venue(
+            id: '',
+            name: _nameController.text,
+            description: _descriptionController.text,
+            address: _addressController.text,
+            location: const Location(latitude: 0, longitude: 0),
+          );
 
       await widget.onSubmit(venue);
     } finally {

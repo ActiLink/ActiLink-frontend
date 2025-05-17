@@ -173,28 +173,30 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                   title: 'Upcoming Events',
                   child: Column(
                     children: _currentVenue.events
-                        .map((event) => Card(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              color: AppColors.surface, // Add white background
-                              child: ListTile(
-                                title: Text(
-                                  event.title,
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  event.description,
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                                onTap: () => context.push(
-                                  '/events/details/${event.id}',
-                                  extra: event,
+                        .map(
+                          (event) => Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            color: AppColors.surface, // Add white background
+                            child: ListTile(
+                              title: Text(
+                                event.title,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
-                            ),)
+                              subtitle: Text(
+                                event.description,
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              onTap: () => context.push(
+                                '/events/details/${event.id}',
+                                extra: event,
+                              ),
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
                 ),
@@ -228,14 +230,12 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
       context.read<GoogleMapsService>();
 
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     } catch (e) {
       log('Error reverse geocoding in VenueDetails: $e');
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
@@ -245,12 +245,13 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Delete Venue?', style: AppTextStyles.labelMedium),
           content: Text(
             'Are you sure you want to permanently delete "${_currentVenue.name}"? This action cannot be undone.',
-            style:
-                AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.bodyMedium
+                .copyWith(color: AppColors.textSecondary),
           ),
           actions: <Widget>[
             TextButton(

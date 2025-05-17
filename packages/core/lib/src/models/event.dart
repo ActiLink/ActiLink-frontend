@@ -15,9 +15,9 @@ class EventOrganizer extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-  };
+        'id': id,
+        'name': name,
+      };
 
   final String id;
   final String name;
@@ -47,9 +47,9 @@ class EventParticipant extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-  };
+        'id': id,
+        'name': name,
+      };
 
   final String id;
   final String name;
@@ -110,7 +110,7 @@ class Event extends Equatable {
       minUsers: json['minUsers'] as int? ?? 1,
       maxUsers: json['maxUsers'] as int? ?? 0,
       hobbies: hobbiesList,
-      organizer: json['organizer'] != null 
+      organizer: json['organizer'] != null
           ? EventOrganizer.fromJson(json['organizer'] as Map<String, dynamic>)
           : null,
       participants: participantsList,
@@ -133,20 +133,20 @@ class Event extends Equatable {
   final Venue? venue;
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'description': description,
-    'startTime': startTime.toIso8601String(),
-    'endTime': endTime.toIso8601String(),
-    'location': location.toJson(),
-    'price': price,
-    'minUsers': minUsers,
-    'maxUsers': maxUsers,
-    'hobbies': hobbies.map((h) => h.toJson()).toList(),
-    'organizer': organizer?.toJson(),
-    'participants': participants?.map((p) => p.toJson()).toList(),
-    'venue': venue?.toJson(),
-  };
+        'id': id,
+        'title': title,
+        'description': description,
+        'startTime': startTime.toIso8601String(),
+        'endTime': endTime.toIso8601String(),
+        'location': location.toJson(),
+        'price': price,
+        'minUsers': minUsers,
+        'maxUsers': maxUsers,
+        'hobbies': hobbies.map((h) => h.toJson()).toList(),
+        'organizer': organizer?.toJson(),
+        'participants': participants?.map((p) => p.toJson()).toList(),
+        'venue': venue?.toJson(),
+      };
 
   Map<String, dynamic> toNewOrUpdateJson() {
     return {
@@ -198,18 +198,18 @@ class Event extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    title,
-    description,
-    startTime,
-    endTime,
-    location,
-    price,
-    minUsers,
-    maxUsers,
-    hobbies,
-    organizer,
-    participants,
-    venue,
-  ];
+        id,
+        title,
+        description,
+        startTime,
+        endTime,
+        location,
+        price,
+        minUsers,
+        maxUsers,
+        hobbies,
+        organizer,
+        participants,
+        venue,
+      ];
 }
