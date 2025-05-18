@@ -3,10 +3,10 @@ import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/events/view/event_details.dart';
 import 'package:actilink/events/view/events_screen.dart';
-import 'package:actilink/events/view/post_event_screen.dart';
 import 'package:actilink/events/view/widgets/event_form.dart';
 import 'package:actilink/home/home_screen.dart';
 import 'package:actilink/home/main_shell.dart';
+import 'package:actilink/post_chooser_screen.dart';
 import 'package:actilink/profile/view/edit_hobbies_screen.dart';
 import 'package:actilink/profile/view/edit_profile_screen.dart';
 import 'package:actilink/profile/view/profile_screen.dart';
@@ -99,7 +99,7 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: '/post',
-          builder: (context, state) => const PostEventScreen(),
+          builder: (context, state) => const PostChooserScreen(),
         ),
         GoRoute(
           path: '/map',

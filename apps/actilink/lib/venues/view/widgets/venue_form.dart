@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
 
 class VenueForm extends StatefulWidget {
@@ -19,10 +21,12 @@ class VenueForm extends StatefulWidget {
 class _VenueFormState extends State<VenueForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
+  final bool _isFetchingLocation = false;
 
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _addressController;
+  Location? _location;
 
   @override
   void initState() {
@@ -31,6 +35,7 @@ class _VenueFormState extends State<VenueForm> {
     _descriptionController =
         TextEditingController(text: widget.venue?.description);
     _addressController = TextEditingController(text: widget.venue?.address);
+    _location = widget.venue?.location;
   }
 
   @override
@@ -45,50 +50,43 @@ class _VenueFormState extends State<VenueForm> {
   Widget build(BuildContext context) {
     final isEditing = widget.venue != null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Edit Venue' : 'Add Venue'),
-      ),
-      body: Form(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
+        child: Column(
           children: [
-            TextFormField(
+            AppTextField(
+              label: 'Name',
+              hintText: 'Enter venue name',
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter venue name',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Name is required' : null,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: 8),
+            AppTextField(
+              label: 'Description',
+              hintText: 'Enter venue description',
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Enter venue description',
-              ),
-              maxLines: 3,
+              multiline: true,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: 8),
+            AppTextField(
+              label: 'Address',
+              hintText: 'Enter venue address',
               controller: _addressController,
-              decoration: const InputDecoration(
-                labelText: 'Address',
-                hintText: 'Enter venue address',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter an address';
-                }
-                return null;
-              },
+              suffixIcon: _isFetchingLocation
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Address is required' : null,
             ),
             const SizedBox(height: 24),
             AppButton(
@@ -99,7 +97,7 @@ class _VenueFormState extends State<VenueForm> {
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: AppColors.black,
                       ),
                     )
                   : Text(isEditing ? 'Update Venue' : 'Create Venue'),
@@ -111,26 +109,47 @@ class _VenueFormState extends State<VenueForm> {
   }
 
   Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_isSubmitting) return;
+    if (!_formKey.currentState!.validate() || _isSubmitting) return;
 
     setState(() => _isSubmitting = true);
 
     try {
+      final rawAddress = _addressController.text.trim();
+      final mapsService = context.read<GoogleMapsService>();
+      final geocodedLocation = await mapsService.forwardGeocode(rawAddress);
+
+      if (geocodedLocation == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Could not determine coordinates for the given address.'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        setState(() => _isSubmitting = false);
+        return;
+      }
+
+      final formattedAddress =
+          await mapsService.reverseGeocode(geocodedLocation);
+
       final venue = widget.venue?.copyWith(
-            name: _nameController.text,
-            description: _descriptionController.text,
-            address: _addressController.text,
+            name: _nameController.text.trim(),
+            description: _descriptionController.text.trim(),
+            address: formattedAddress ?? rawAddress,
+            location: geocodedLocation,
           ) ??
           Venue(
             id: '',
-            name: _nameController.text,
-            description: _descriptionController.text,
-            address: _addressController.text,
-            location: const Location(latitude: 0, longitude: 0),
+            name: _nameController.text.trim(),
+            description: _descriptionController.text.trim(),
+            address: formattedAddress ?? rawAddress,
+            location: geocodedLocation,
           );
 
       await widget.onSubmit(venue);
+    } catch (e) {
+      log('Error during venue submission: $e');
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
