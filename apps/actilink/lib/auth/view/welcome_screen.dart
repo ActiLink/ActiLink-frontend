@@ -21,7 +21,7 @@ class WelcomeScreen extends StatelessWidget {
         if (state is AuthAuthenticated) {
           context.read<EventsCubit>().fetchEvents();
           context.read<HobbiesCubit>().fetchHobbies();
-          context.go('/home');
+          context.go('/events');
         }
       },
       child: Scaffold(
