@@ -17,7 +17,7 @@ class PostVenueScreen extends StatelessWidget {
         final success = isEditing
             ? await venuesCubit.updateVenue(venue.id, venue)
             : await venuesCubit.addVenue(venue);
-
+        if (!context.mounted) return;
         if (success && context.mounted) {
           context.go('/venues');
         } else {

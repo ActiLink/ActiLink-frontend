@@ -26,7 +26,6 @@ class _VenueFormState extends State<VenueForm> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _addressController;
-  Location? _location;
 
   @override
   void initState() {
@@ -35,7 +34,6 @@ class _VenueFormState extends State<VenueForm> {
     _descriptionController =
         TextEditingController(text: widget.venue?.description);
     _addressController = TextEditingController(text: widget.venue?.address);
-    _location = widget.venue?.location;
   }
 
   @override
@@ -119,6 +117,8 @@ class _VenueFormState extends State<VenueForm> {
       final geocodedLocation = await mapsService.forwardGeocode(rawAddress);
 
       if (geocodedLocation == null) {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content:
@@ -126,6 +126,7 @@ class _VenueFormState extends State<VenueForm> {
             backgroundColor: AppColors.error,
           ),
         );
+
         setState(() => _isSubmitting = false);
         return;
       }
