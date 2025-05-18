@@ -5,6 +5,7 @@ import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:actilink/l10n/l10n.dart';
 import 'package:actilink/router.dart';
+import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,11 @@ class App extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
+          create: (context) => VenueRepository(
+            apiService: context.read<ApiService>(),
+          ),
+        ),
+        RepositoryProvider(
           create: (context) => AuthService(
             apiService: context.read<ApiService>(),
             tokenRepository: context.read<AuthTokenRepository>(),
@@ -72,6 +78,11 @@ class App extends StatelessWidget {
             create: (context) => HobbiesCubit(
               hobbyRepository: context.read<HobbyRepository>(),
             ),
+          ),
+          BlocProvider(
+            create: (context) => VenuesCubit(
+              venueRepository: context.read<VenueRepository>(),
+            )..fetchVenues(),
           ),
         ],
         child: AppStartup(

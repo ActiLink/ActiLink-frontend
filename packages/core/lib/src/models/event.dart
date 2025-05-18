@@ -14,6 +14,11 @@ class EventOrganizer extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+      };
+
   final String id;
   final String name;
 
@@ -41,6 +46,11 @@ class EventParticipant extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+      };
+
   final String id;
   final String name;
 
@@ -62,6 +72,7 @@ class Event extends Equatable {
     this.id,
     this.organizer,
     this.participants,
+    this.venue,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -80,6 +91,7 @@ class Event extends Equatable {
         .toList();
 
     final locationJson = json['location'] as Map<String, dynamic>?;
+    final venueJson = json['venue'] as Map<String, dynamic>?;
 
     return Event(
       id: json['id'] as String? ?? '',
@@ -98,10 +110,11 @@ class Event extends Equatable {
       minUsers: json['minUsers'] as int? ?? 1,
       maxUsers: json['maxUsers'] as int? ?? 0,
       hobbies: hobbiesList,
-      organizer: EventOrganizer.fromJson(
-        json['organizer'] as Map<String, dynamic>? ?? {},
-      ),
+      organizer: json['organizer'] != null
+          ? EventOrganizer.fromJson(json['organizer'] as Map<String, dynamic>)
+          : null,
       participants: participantsList,
+      venue: venueJson != null ? Venue.fromJson(venueJson) : null,
     );
   }
 
@@ -117,6 +130,23 @@ class Event extends Equatable {
   final List<Hobby> hobbies;
   final EventOrganizer? organizer;
   final List<EventParticipant>? participants;
+  final Venue? venue;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'startTime': startTime.toIso8601String(),
+        'endTime': endTime.toIso8601String(),
+        'location': location.toJson(),
+        'price': price,
+        'minUsers': minUsers,
+        'maxUsers': maxUsers,
+        'hobbies': hobbies.map((h) => h.toJson()).toList(),
+        'organizer': organizer?.toJson(),
+        'participants': participants?.map((p) => p.toJson()).toList(),
+        'venue': venue?.toJson(),
+      };
 
   Map<String, dynamic> toNewOrUpdateJson() {
     return {
@@ -129,6 +159,7 @@ class Event extends Equatable {
       'minUsers': minUsers,
       'maxUsers': maxUsers,
       'relatedHobbies': hobbies.map((hobby) => hobby.toJson()).toList(),
+      'venueId': venue?.id,
     };
   }
 
@@ -146,6 +177,7 @@ class Event extends Equatable {
     List<Hobby>? hobbies,
     EventOrganizer? organizer,
     List<EventParticipant>? participants,
+    Venue? venue,
   }) {
     return Event(
       id: id ?? this.id,
@@ -160,6 +192,7 @@ class Event extends Equatable {
       hobbies: hobbies ?? this.hobbies,
       organizer: organizer ?? this.organizer,
       participants: participants ?? this.participants,
+      venue: venue ?? this.venue,
     );
   }
 
@@ -177,5 +210,6 @@ class Event extends Equatable {
         hobbies,
         organizer,
         participants,
+        venue,
       ];
 }
