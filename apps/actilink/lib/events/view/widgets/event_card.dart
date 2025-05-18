@@ -60,17 +60,17 @@ class EventCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    event.title,
-                    style: AppTextStyles.displayMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      fontSize: 20,
+                  Expanded(
+                    child: Text(
+                      event.title,
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 20,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
-                  // Enrolled badge
                   if (isEnrolled)
                     Container(
                       padding: const EdgeInsets.symmetric(
