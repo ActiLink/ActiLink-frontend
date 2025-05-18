@@ -15,15 +15,28 @@ class EditVenueScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VenueForm(
-      venue: venue,
-      onSubmit: (updatedVenue) async {
-        context.read<VenuesCubit>();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Venue'),
+      ),
+      body: VenueForm(
+        venue: venue,
+        onSubmit: (updatedVenue) async {
+          final success = await context
+              .read<VenuesCubit>()
+              .updateVenue(venue.id, updatedVenue);
 
-        if (!context.mounted) return;
+          if (!context.mounted) return;
 
-        context.pop(updatedVenue);
-      },
+          if (success) {
+            context.pop(updatedVenue);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to update venue')),
+            );
+          }
+        },
+      ),
     );
   }
 }
