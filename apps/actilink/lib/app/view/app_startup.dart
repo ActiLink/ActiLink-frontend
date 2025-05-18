@@ -2,6 +2,7 @@ import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
+import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,7 @@ class _AppStartupState extends State<AppStartup> {
     final authCubit = context.read<AuthCubit>();
     final eventsCubit = context.read<EventsCubit>();
     final hobbiesCubit = context.read<HobbiesCubit>();
+    final venuesCubit = context.read<VenuesCubit>();
 
     // Initialize the auth interceptor
     context.read<ApiService>().addInterceptor(
@@ -45,6 +47,7 @@ class _AppStartupState extends State<AppStartup> {
     if (authCubit.state is AuthAuthenticated) {
       await eventsCubit.fetchEvents();
       await hobbiesCubit.fetchHobbies();
+      await venuesCubit.fetchVenues();
     }
 
     if (mounted) {

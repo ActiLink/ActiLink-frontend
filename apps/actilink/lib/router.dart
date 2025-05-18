@@ -10,12 +10,14 @@ import 'package:actilink/home/main_shell.dart';
 import 'package:actilink/profile/view/edit_hobbies_screen.dart';
 import 'package:actilink/profile/view/edit_profile_screen.dart';
 import 'package:actilink/profile/view/profile_screen.dart';
+import 'package:actilink/venues/view/edit_venue_screen.dart';
+import 'package:actilink/venues/view/venue_details.dart';
+import 'package:actilink/venues/view/venues_screen.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-// Create a navigation key
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -23,10 +25,9 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: '/events',
   redirect: (context, state) {
     final authState = context.read<AuthCubit>().state;
-
     final isLoggingIn = state.uri.path == '/welcome';
     final isAuthenticated = authState is AuthAuthenticated;
 
@@ -35,7 +36,7 @@ final GoRouter appRouter = GoRouter(
     }
 
     if (isAuthenticated && isLoggingIn) {
-      return '/home';
+      return '/events';
     }
 
     return null;
@@ -49,10 +50,6 @@ final GoRouter appRouter = GoRouter(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) => MainShell(child: child),
       routes: [
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
-        ),
         GoRoute(
           path: '/events',
           builder: (context, state) => const EventsScreen(),
@@ -79,12 +76,34 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
         GoRoute(
+          path: '/venues',
+          builder: (context, state) => const VenuesScreen(),
+          routes: [
+            GoRoute(
+              path: 'details/:id',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final venue = state.extra! as Venue;
+                return VenueDetailsScreen(venue: venue);
+              },
+            ),
+            GoRoute(
+              path: 'edit/:id',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final venue = state.extra! as Venue;
+                return EditVenueScreen(venue: venue);
+              },
+            ),
+          ],
+        ),
+        GoRoute(
           path: '/post',
           builder: (context, state) => const PostEventScreen(),
         ),
         GoRoute(
           path: '/map',
-          builder: (context, state) => const HomeScreen(), // placeholder
+          builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/profile',
@@ -97,8 +116,7 @@ final GoRouter appRouter = GoRouter(
               routes: [
                 GoRoute(
                   path: 'hobbies',
-                  builder: (context, state) =>
-                      const EditHobbiesScreen(), // placeholder
+                  builder: (context, state) => const EditHobbiesScreen(),
                 ),
               ],
             ),

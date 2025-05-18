@@ -7,8 +7,8 @@ class MainShell extends StatelessWidget {
   final Widget child;
 
   static const tabs = [
-    '/home',
     '/events',
+    '/venues',
     '/post',
     '/map',
     '/profile',
@@ -34,12 +34,12 @@ class MainShell extends StatelessWidget {
         unselectedItemColor: AppColors.white,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.event_rounded),
             label: 'Events',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: 'Venues',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.add_rounded), label: 'Post'),
           BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Map'),

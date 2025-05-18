@@ -5,3 +5,4 @@ export 'models/event.dart';
 export 'models/hobby.dart';
 export 'models/location.dart';
 export 'models/user.dart';
+export 'models/venue.dart';
