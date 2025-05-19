@@ -5,6 +5,7 @@ import 'package:actilink/auth/view/selet_user_type_modal_login.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
+import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,6 +22,7 @@ class WelcomeScreen extends StatelessWidget {
         if (state is AuthAuthenticated) {
           context.read<EventsCubit>().fetchEvents();
           context.read<HobbiesCubit>().fetchHobbies();
+          context.read<VenuesCubit>().fetchVenues();
           context.go('/events');
         }
       },

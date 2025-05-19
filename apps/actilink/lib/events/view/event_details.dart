@@ -253,7 +253,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 ),
 
               // Enrollment/Withdrawal Buttons
-              if (!isOrganizer && !isBusinessClient)
+              if (!isBusinessClient)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Center(
