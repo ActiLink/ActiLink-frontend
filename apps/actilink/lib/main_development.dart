@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:actilink/app/app.dart';
-import 'package:actilink/app/flavor.dart';
 import 'package:actilink/bootstrap.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -15,6 +14,5 @@ class MyHttpOverrides extends HttpOverrides {
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
-  initFlavor(Flavor.development);
   bootstrap(() => const App());
 }
