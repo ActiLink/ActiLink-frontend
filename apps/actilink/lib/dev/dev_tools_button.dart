@@ -1,4 +1,6 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// A button that shows developer tools in development mode.
 class DevToolsButton extends StatelessWidget {
@@ -35,7 +37,6 @@ class DevToolsButton extends StatelessWidget {
   void _showDevToolsModal(BuildContext context) {
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
       barrierColor: Colors.black54,
       builder: (context) => const DevToolsModal(),
     );
@@ -52,11 +53,13 @@ class DevToolsModal extends StatefulWidget {
 
 class _DevToolsModalState extends State<DevToolsModal> {
   final TextEditingController _tokenController = TextEditingController();
-  String _selectedUserType = 'user';
+  final TextEditingController _refreshTokenController = TextEditingController();
+  String _selectedUserType = 'User';
 
   @override
   void dispose() {
     _tokenController.dispose();
+    _refreshTokenController.dispose();
     super.dispose();
   }
 
@@ -104,6 +107,27 @@ class _DevToolsModalState extends State<DevToolsModal> {
             ),
             const SizedBox(height: 16),
             const Text(
+              'Refresh Token:',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _refreshTokenController,
+              decoration: InputDecoration(
+                hintText: 'Enter refresh token',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
               'User Type:',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
@@ -112,7 +136,7 @@ class _DevToolsModalState extends State<DevToolsModal> {
             const SizedBox(height: 8),
             RadioListTile<String>(
               title: const Text('User'),
-              value: 'user',
+              value: 'User',
               groupValue: _selectedUserType,
               onChanged: (value) {
                 setState(() {
@@ -122,7 +146,7 @@ class _DevToolsModalState extends State<DevToolsModal> {
             ),
             RadioListTile<String>(
               title: const Text('Business Client'),
-              value: 'business_client',
+              value: 'BusinessClient',
               groupValue: _selectedUserType,
               onChanged: (value) {
                 setState(() {
@@ -141,8 +165,14 @@ class _DevToolsModalState extends State<DevToolsModal> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
-                    // No functionality needed, just UI
-                    Navigator.of(context).pop();
+                    final authService = context.read<AuthService>();
+                    final token = _tokenController.text;
+                    final refreshToken = _refreshTokenController.text;
+                    authService.injectUser(
+                      accessToken: token,
+                      refreshToken: refreshToken,
+                      role: _selectedUserType,
+                    );
                   },
                   child: const Text('Apply'),
                 ),

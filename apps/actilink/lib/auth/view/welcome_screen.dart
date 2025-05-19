@@ -1,13 +1,13 @@
-import 'package:actilink/app/flags.dart';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/select_user_type_modal_register.dart';
 import 'package:actilink/auth/view/selet_user_type_modal_login.dart';
 import 'package:actilink/auth/widgets/custom_bottom_sheet.dart';
-import 'package:actilink/dev/dev_tools_button.dart' show DevToolsButton, kIsDev;
+import 'package:actilink/dev/dev_tools_button.dart';
 import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:actilink/venues/logic/venues_cubit.dart';
+import 'package:core/foundation.dart' show kIsDev;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
