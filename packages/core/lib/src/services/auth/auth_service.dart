@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:core/src/foundation/flags.dart' show kIsDev;
 import 'package:core/src/models.dart';
 import 'package:core/src/repositories.dart';
 import 'package:core/src/services.dart';
@@ -139,34 +138,29 @@ class AuthService {
     }
   }
 
-  Future<BaseUser?> injectUser({
+  Future<void> injectUser({
     required String accessToken,
     required String refreshToken,
     required String role,
   }) async {
-    // Only compile this function in development mode
-    if (kIsDev) {
-      log('AuthService [DEV MODE]: Injecting user with provided token');
-      final token = AuthToken(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+    log('AuthService [DEV MODE]: Injecting user with provided token');
+    final token = AuthToken(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+
+    await _tokenRepository.saveToken(token);
+    log('AuthService [DEV MODE]: Tokens saved.');
+
+    final user = await _getUserFromToken(token.accessToken, role);
+    if (user == null) {
+      throw ApiException(
+        'Dev injection failed: Could not extract User from token.',
       );
-
-      await _tokenRepository.saveToken(token);
-      log('AuthService [DEV MODE]: Tokens saved.');
-
-      final user = await _getUserFromToken(token.accessToken, role);
-      if (user == null) {
-        throw ApiException(
-          'Dev injection failed: Could not extract User from token.',
-        );
-      }
-
-      log('AuthService [DEV MODE]: User details injected: ${user.name}');
-      _userStreamController.add(user);
-      return user;
     }
-    return null;
+
+    log('AuthService [DEV MODE]: User details injected: ${user.name}');
+    _userStreamController.add(user);
   }
 
   Future<BaseUser> _handleLogin({
