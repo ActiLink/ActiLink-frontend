@@ -24,25 +24,31 @@ class AuthService {
 
   Stream<BaseUser?> get userStream => _userStreamController.stream;
 
-  Future<BaseUser?> _getUserFromToken(String token) async {
+  Future<BaseUser?> _getUserFromToken(String token, [String? role]) async {
     try {
       final decodedToken = JwtDecoder.decode(token);
       final userId = decodedToken['nameid'] as String?;
-      final role = decodedToken['role'] as String?;
+      var decodedRole = role;
+      if (role == null) {
+        decodedRole = decodedToken['role'] as String?;
+      }
 
-      if (userId == null || userId.isEmpty || role == null || role.isEmpty) {
+      if (userId == null ||
+          userId.isEmpty ||
+          decodedRole == null ||
+          decodedRole.isEmpty) {
         log('Decoded token is missing required fields.');
         return null;
       }
 
       log('Decoded User ID from token: $userId');
       try {
-        if (role == 'User') {
+        if (decodedRole == 'User') {
           return await _baseUserRepository.fetchUserById(userId);
-        } else if (role == 'BusinessClient') {
+        } else if (decodedRole == 'BusinessClient') {
           return await _baseUserRepository.fetchBusinessClientById(userId);
         } else {
-          log('Unknown role: $role');
+          log('Unknown role: $decodedRole');
           return null;
         }
       } catch (e) {
@@ -130,6 +136,31 @@ class AuthService {
       log('Registration service failed: $e');
       rethrow;
     }
+  }
+
+  Future<void> injectUser({
+    required String accessToken,
+    required String refreshToken,
+    required String role,
+  }) async {
+    log('AuthService [DEV MODE]: Injecting user with provided token');
+    final token = AuthToken(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+
+    await _tokenRepository.saveToken(token);
+    log('AuthService [DEV MODE]: Tokens saved.');
+
+    final user = await _getUserFromToken(token.accessToken, role);
+    if (user == null) {
+      throw ApiException(
+        'Dev injection failed: Could not extract User from token.',
+      );
+    }
+
+    log('AuthService [DEV MODE]: User details injected: ${user.name}');
+    _userStreamController.add(user);
   }
 
   Future<BaseUser> _handleLogin({

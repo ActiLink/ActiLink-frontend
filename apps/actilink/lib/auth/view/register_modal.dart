@@ -22,7 +22,6 @@ class _RegisterModalState extends State<RegisterModal> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   String? errorMessage;
-  // ignore: unused_field
   late String? _taxId;
 
   @override
