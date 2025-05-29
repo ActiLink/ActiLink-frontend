@@ -280,7 +280,6 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
 
     var success = false;
     String? errorMsg;
-
     try {
       success = await context.read<VenuesCubit>().deleteVenue(_currentVenue.id);
       if (!success && mounted) {
@@ -289,8 +288,8 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
             : 'Failed to delete venue.';
       }
     } catch (e) {
-      log('Error deleting venue: $e');
-      errorMsg = 'An unexpected error occurred while deleting the venue.';
+      log('Error calling deleteVenue cubit method: $e');
+      errorMsg = 'An unexpected error occurred during deletion.';
     }
 
     if (!mounted) return;
@@ -308,13 +307,15 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
           ),
         );
 
-      context.go('/venues');
+      if (context.canPop()) {
+        context.pop();
+      }
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(errorMsg ?? 'Failed to delete venue'),
+            content: Text(errorMsg ?? 'Failed to delete venue.'),
             backgroundColor: AppColors.error,
           ),
         );
