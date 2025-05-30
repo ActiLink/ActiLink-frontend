@@ -241,7 +241,6 @@ class EventFormState extends State<EventForm> {
                       ),
                       items: [
                         const DropdownMenuItem<String?>(
-                          value: null,
                           child: Text('No venue'),
                         ),
                         ..._venues.map(
