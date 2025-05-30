@@ -633,17 +633,10 @@ class EventFormState extends State<EventForm> {
           if (!mounted) return;
           // Update Venue to include this event
           if (_selectedVenue != null && resultEvent?.id != null) {
-            final venueCubit = context.read<VenuesCubit>();
-            final currentVenue = _selectedVenue!;
-            final updatedVenue = currentVenue.copyWith(
-              events: [...currentVenue.events, eventData],
-            );
-            try {
-              await venueCubit.updateVenue(currentVenue.id, updatedVenue);
-              log('Venue ${currentVenue.name} updated with new event ${resultEvent!.id}');
-            } catch (e) {
-              log('Failed to update venue with new event: $e');
-            }
+            context
+                .read<VenuesCubit>()
+                .addEventToVenue(_selectedVenue!.id, resultEvent!);
+            log('Venue ${_selectedVenue!.name} locally updated with new event ${resultEvent.id}');
           }
         } else if (mounted) {
           log('Attempting to update event ${widget.event!.id}...');
