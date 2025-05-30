@@ -218,7 +218,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
     if (!mounted) return;
 
     if (fullEvent != null) {
-      context.go('/events/details/${fullEvent.id}', extra: fullEvent);
+      context.push('/events/details/${fullEvent.id}', extra: fullEvent);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
