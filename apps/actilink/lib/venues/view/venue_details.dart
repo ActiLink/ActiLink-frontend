@@ -193,7 +193,11 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                               ),
                               onTap: () async {
                                 final eventId = event.id;
-                                await _navigateToEventDetails(eventId!);
+                                if (eventId != null) {
+                                  await _navigateToEventDetails(eventId);
+                                } else {
+                                  log('Event ID is null');
+                                }
                               },
                             ),
                           ),
