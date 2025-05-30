@@ -48,6 +48,19 @@
         "--target",
         "lib/main_production.dart"
       ]
+    },
+    {
+      "name": "Launch ActiLink - Integration Tests",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/app_test.dart",
+      "cwd": "${workspaceFolder}/apps/actilink",
+      "args": [
+        "--dart-define-from-file",
+        ".env",
+        "--flavor",
+        "development",
+      ]
     }
   ]
 }
