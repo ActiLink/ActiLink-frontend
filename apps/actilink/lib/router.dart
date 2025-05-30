@@ -1,10 +1,10 @@
+import 'package:actilink/app/map/view/map_screen.dart';
 import 'package:actilink/auth/logic/auth_cubit.dart';
 import 'package:actilink/auth/logic/auth_state.dart';
 import 'package:actilink/auth/view/welcome_screen.dart';
 import 'package:actilink/events/view/event_details.dart';
 import 'package:actilink/events/view/events_screen.dart';
 import 'package:actilink/events/view/widgets/event_form.dart';
-import 'package:actilink/home/home_screen.dart';
 import 'package:actilink/home/main_shell.dart';
 import 'package:actilink/post_chooser_screen.dart';
 import 'package:actilink/profile/view/edit_hobbies_screen.dart';
@@ -103,7 +103,7 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: '/map',
-          builder: (context, state) => const HomeScreen(),
+          builder: (context, state) => const MapScreen(),
         ),
         GoRoute(
           path: '/profile',
