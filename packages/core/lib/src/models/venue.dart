@@ -147,5 +147,13 @@ class Venue extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+        id,
+        name,
+        description,
+        location,
+        address,
+        owner,
+        events,
+      ];
 }

@@ -232,32 +232,34 @@ class EventFormState extends State<EventForm> {
                 if (_venues.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: DropdownButtonFormField<Venue?>(
-                      value: _selectedVenue,
+                    child: DropdownButtonFormField<String?>(
+                      value: _selectedVenue?.id,
                       isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Venue (optional)',
                         border: OutlineInputBorder(),
                       ),
                       items: [
-                        const DropdownMenuItem<Venue?>(
+                        const DropdownMenuItem<String?>(
+                          value: null,
                           child: Text('No venue'),
                         ),
                         ..._venues.map(
-                          (venue) => DropdownMenuItem<Venue?>(
-                            value: venue,
+                          (venue) => DropdownMenuItem<String?>(
+                            value: venue.id,
                             child: Text(venue.name),
                           ),
                         ),
                       ],
-                      onChanged: (venue) {
+                      onChanged: (venueId) {
                         setState(() {
-                          _selectedVenue = venue;
-                          if (venue != null) {
-                            _selectedLocation = venue.location;
-                            _locationController.text =
-                                'Lat: ${venue.location.latitude.toStringAsFixed(4)}, Lon: ${venue.location.longitude.toStringAsFixed(4)}';
+                          if (venueId == null) {
+                            _selectedVenue = null;
+                            _locationController.text = '';
                           } else {
+                            _selectedVenue =
+                                _venues.firstWhere((v) => v.id == venueId);
+                            _selectedLocation = _selectedVenue!.location;
                             _locationController.text = '';
                           }
                         });
@@ -632,7 +634,7 @@ class EventFormState extends State<EventForm> {
           }
           if (!mounted) return;
           // Update Venue to include this event
-          if (_selectedVenue != null && resultEvent?.id != null) {
+          if (_selectedVenue != null) {
             context
                 .read<VenuesCubit>()
                 .addEventToVenue(_selectedVenue!.id, resultEvent!);
