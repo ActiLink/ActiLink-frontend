@@ -125,4 +125,16 @@ class VenuesCubit extends Cubit<VenuesState> {
       return false;
     }
   }
+
+  void addEventToVenue(String venueId, Event event) {
+    final updatedVenues = state.venues.map((venue) {
+      if (venue.id == venueId) {
+        final updatedEvents = List<Event>.from(venue.events)..add(event);
+        return venue.copyWith(events: updatedEvents);
+      }
+      return venue;
+    }).toList();
+
+    emit(state.copyWith(venues: updatedVenues));
+  }
 }

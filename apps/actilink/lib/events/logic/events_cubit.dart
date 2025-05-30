@@ -184,4 +184,19 @@ class EventsCubit extends Cubit<EventsState> {
       return false;
     }
   }
+
+  Future<Event?> fetchEventById(String eventId) async {
+    try {
+      final event = await _eventRepository.getEventById(eventId);
+      return event;
+    } on ApiException catch (e) {
+      log('API error fetching event by ID: $e');
+      emit(state.copyWith(error: e.message));
+      return null;
+    } catch (e) {
+      log('Unexpected error fetching event by ID: $e');
+      emit(state.copyWith(error: 'Unexpected error fetching event.'));
+      return null;
+    }
+  }
 }
