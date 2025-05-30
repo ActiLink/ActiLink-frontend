@@ -52,7 +52,7 @@ void main() {
         const EventsState(status: EventsStatus.loading),
         const EventsState(
           status: EventsStatus.failure,
-          error: 'Boom',
+          error: 'Exception',
         ),
       ],
     );
