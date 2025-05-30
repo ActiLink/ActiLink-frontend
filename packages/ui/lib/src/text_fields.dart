@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/theme/app_colors.dart';
 import 'package:ui/src/theme/text_styles.dart';
 
-/// A reusable text input field with customizable styling, validation,
-/// and support for enabling/disabling interaction.
+/// A reusable text input field with customizable styling, validation.
 ///
 /// This widget is used for user input such as forms or authentication screens.
-/// It supports features like label display, hint text, password obscuring,
-/// suffix icons (e.g., for visibility toggling), multiline input, and enable/disable state.
+/// It supports features like label display, hint text, password obscuring.
+/// and suffix icons (e.g., for visibility toggling).
 class AppTextField extends StatelessWidget {
   /// Creates an [AppTextField].
   ///
@@ -20,8 +19,7 @@ class AppTextField extends StatelessWidget {
   /// [onChanged] is a callback for when the text field value changes,
   /// [suffixIcon] is an optional widget displayed at the end of text field,
   /// [multiline] determines if the text field should support multiple lines,
-  /// [labelStyle] allows customizing the style of the label text,
-  /// [enabled] controls whether the text field is interactive or disabled.
+  /// [labelStyle] allows customizing the style of the label text.
   const AppTextField({
     required this.label,
     required this.hintText,
@@ -34,7 +32,6 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.multiline = false,
     this.labelStyle,
-    this.enabled = true,
   });
 
   /// The label text that appears above the text field.
@@ -58,7 +55,7 @@ class AppTextField extends StatelessWidget {
   /// A callback function that triggers when the text field value changes.
   final ValueChanged<String>? onChanged;
 
-  /// An optional widget (e.g., icon) displayed at the end of text field.
+  /// An optional widget (e.g., icon) displayed at the end of the text field.
   final Widget? suffixIcon;
 
   /// Determines whether the text field should support multiple lines of text.
@@ -66,9 +63,6 @@ class AppTextField extends StatelessWidget {
 
   /// Custom style for the label text.
   final TextStyle? labelStyle;
-
-  /// Controls whether the text field is interactive or disabled.
-  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +88,6 @@ class AppTextField extends StatelessWidget {
             onChanged: onChanged,
             maxLines: multiline ? null : 1,
             minLines: multiline ? 3 : 1,
-            enabled: enabled,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle:
