@@ -643,7 +643,6 @@ class EventFormState extends State<EventForm> {
               log('Venue ${currentVenue.name} updated with new event ${resultEvent!.id}');
             } catch (e) {
               log('Failed to update venue with new event: $e');
-              // Możesz też wyświetlić SnackBar albo zostawić to jako warning w logu
             }
           }
         } else if (mounted) {
