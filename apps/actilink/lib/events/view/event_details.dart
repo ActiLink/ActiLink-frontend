@@ -177,6 +177,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     label: 'Location',
                     value: _formattedLocation,
                   ),
+                  if (_currentEvent.venue != null)
+                    InfoRow(
+                      icon: Icons.location_city_outlined,
+                      label: 'Venue',
+                      value: _currentEvent.venue!.name,
+                    ),
                   const Divider(
                     height: 20,
                     thickness: 1,
