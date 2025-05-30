@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:actilink/auth/logic/auth_cubit.dart';
+import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/view/widgets/info_card.dart';
 import 'package:actilink/events/view/widgets/info_row.dart';
 import 'package:actilink/venues/logic/venues_cubit.dart';
@@ -190,10 +191,10 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                                   color: AppColors.textSecondary,
                                 ),
                               ),
-                              onTap: () => context.push(
-                                '/events/details/${event.id}',
-                                extra: event,
-                              ),
+                              onTap: () async {
+                                final eventId = event.id;
+                                await _navigateToEventDetails(eventId!);
+                              },
                             ),
                           ),
                         )
@@ -205,6 +206,23 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _navigateToEventDetails(String eventId) async {
+    final fullEvent = await context.read<EventsCubit>().fetchEventById(eventId);
+
+    if (!mounted) return;
+
+    if (fullEvent != null) {
+      context.go('/events/details/${fullEvent.id}', extra: fullEvent);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to load event details.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   Widget _buildSection({required String title, required Widget child}) {
