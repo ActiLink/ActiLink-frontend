@@ -32,7 +32,7 @@ void main() {
       },
       act: (cubit) => cubit.fetchEvents(),
       expect: () => [
-        const EventsState(status: EventsStatus.loading, error: ''),
+        const EventsState(status: EventsStatus.loading),
         EventsState(
           status: EventsStatus.success,
           events: [TestEventFactory.create(id: '1')],
@@ -49,7 +49,7 @@ void main() {
       },
       act: (cubit) => cubit.fetchEvents(),
       expect: () => [
-        const EventsState(status: EventsStatus.loading, error: ''),
+        const EventsState(status: EventsStatus.loading),
         const EventsState(
           status: EventsStatus.failure,
           error: 'Boom',

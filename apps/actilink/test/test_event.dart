@@ -34,11 +34,12 @@ class TestEventFactory {
           participants ?? [const EventParticipant(id: 'u1', name: 'John')],
       venue: venue ??
           const Venue(
-              id: 'v1',
-              name: 'Test Venue',
-              address: '123 Street',
-              description: '',
-              location: Location(latitude: 0, longitude: 0)),
+            id: 'v1',
+            name: 'Test Venue',
+            address: '123 Street',
+            description: '',
+            location: Location(latitude: 0, longitude: 0),
+          ),
     );
   }
 }
