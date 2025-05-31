@@ -5,6 +5,7 @@ import 'package:actilink/events/logic/events_cubit.dart';
 import 'package:actilink/events/logic/events_state.dart';
 import 'package:actilink/events/logic/hobby_cubit.dart';
 import 'package:actilink/events/view/widgets/datetime_picker.dart';
+import 'package:actilink/venues/logic/venues_cubit.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,9 +43,23 @@ class EventFormState extends State<EventForm> {
   bool _isSubmitting = false;
   bool _isFetchingInitialLocation = false;
 
+  Venue? _selectedVenue;
+  List<Venue> _venues = [];
+  Future<void> _loadVenues() async {
+    final venues = context.read<VenuesCubit>().state.venues;
+    setState(() => _venues = venues);
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _loadVenues();
+
+    if (widget.event != null) {
+      _selectedVenue = widget.event!.venue;
+    }
+
     _titleController = TextEditingController(text: widget.event?.title);
     _descriptionController =
         TextEditingController(text: widget.event?.description);
@@ -191,27 +206,65 @@ class EventFormState extends State<EventForm> {
                 const SizedBox(height: 8),
 
                 // --- Location Field ---
-                AppTextField(
-                  label: 'Location Address',
-                  hintText: 'Enter event address',
-                  controller: _locationController,
-                  suffixIcon: _isFetchingInitialLocation
-                      ? const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                if (_selectedVenue == null)
+                  AppTextField(
+                    label: 'Location Address',
+                    hintText: 'Enter event address',
+                    controller: _locationController,
+                    suffixIcon: _isFetchingInitialLocation
+                        ? const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : null,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Location address is required';
+                      }
+                      return null;
+                    },
+                  ),
+
+                if (_venues.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: DropdownButtonFormField<String?>(
+                      value: _selectedVenue?.id,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Venue (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          child: Text('No venue'),
+                        ),
+                        ..._venues.map(
+                          (venue) => DropdownMenuItem<String?>(
+                            value: venue.id,
+                            child: Text(venue.name),
                           ),
-                        )
-                      : null,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Location address is required';
-                    }
-                    return null;
-                  },
-                ),
+                        ),
+                      ],
+                      onChanged: (venueId) {
+                        setState(() {
+                          if (venueId == null) {
+                            _selectedVenue = null;
+                            _locationController.text = '';
+                          } else {
+                            _selectedVenue =
+                                _venues.firstWhere((v) => v.id == venueId);
+                            _selectedLocation = _selectedVenue!.location;
+                            _locationController.text = '';
+                          }
+                        });
+                      },
+                    ),
+                  ),
 
                 const SizedBox(height: 8),
 
@@ -515,47 +568,51 @@ class EventFormState extends State<EventForm> {
       }
 
       setState(() => _isSubmitting = true);
-
       // --- Geocode Address ---
       Location? eventLocation;
-      try {
-        if (mounted) {
-          eventLocation = await context
-              .read<GoogleMapsService>()
-              .forwardGeocode(_locationController.text.trim());
-        }
+      if (_selectedVenue == null) {
+        try {
+          if (mounted) {
+            eventLocation = await context
+                .read<GoogleMapsService>()
+                .forwardGeocode(_locationController.text.trim());
+          }
 
-        if (eventLocation == null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Could not find coordinates for the provided address. Please check the address.',
+          if (eventLocation == null && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Could not find coordinates for the provided address. Please check the address.',
+                ),
+                backgroundColor: AppColors.error,
               ),
-              backgroundColor: AppColors.error,
-            ),
-          );
-          setState(() => _isSubmitting = false);
+            );
+            setState(() => _isSubmitting = false);
+            return;
+          }
+        } catch (e) {
+          log('Error during forward geocoding: $e');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content:
+                    Text('An error occurred while verifying the location.'),
+                backgroundColor: AppColors.error,
+              ),
+            );
+            setState(() => _isSubmitting = false);
+          }
           return;
         }
-      } catch (e) {
-        log('Error during forward geocoding: $e');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('An error occurred while verifying the location.'),
-              backgroundColor: AppColors.error,
-            ),
-          );
-          setState(() => _isSubmitting = false);
-        }
-        return;
+      } else {
+        eventLocation = _selectedVenue!.location;
       }
-
       // --- Create Event Data ---
       final eventData = Event(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         location: eventLocation!,
+        venue: _selectedVenue,
         price: double.parse(_priceController.text),
         minUsers: minUsers,
         maxUsers: maxUsers,
@@ -573,6 +630,14 @@ class EventFormState extends State<EventForm> {
           success = await context.read<EventsCubit>().addEvent(eventData);
           if (success) {
             resultEvent = eventData;
+          }
+          if (!mounted) return;
+          // Update Venue to include this event
+          if (_selectedVenue != null) {
+            context
+                .read<VenuesCubit>()
+                .addEventToVenue(_selectedVenue!.id, resultEvent!);
+            log('Venue ${_selectedVenue!.name} locally updated with new event ${resultEvent.id}');
           }
         } else if (mounted) {
           log('Attempting to update event ${widget.event!.id}...');

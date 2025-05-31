@@ -25,6 +25,13 @@ scripts:
   test:
     run: melos run dart:test && melos run flutter:test
 
+  integration_test:
+    run: flutter test integration_test --dart-define-from-file=.env --flavor development
+    exec:
+      concurrency: 1
+    packageFilters:
+      scope: actilink
+
   generate:
     run: dart run build_runner build
     exec:
