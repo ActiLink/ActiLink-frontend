@@ -8,6 +8,7 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
@@ -186,7 +187,8 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                event.description,
+                                DateFormat('MMM dd, HH:mm')
+                                    .format(event.startTime.toLocal()),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
@@ -218,7 +220,13 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
     if (!mounted) return;
 
     if (fullEvent != null) {
-      await context.push('/events/details/${fullEvent.id}', extra: fullEvent);
+      await context.push(
+        '/events/details/${fullEvent.id}',
+        extra: {
+          'event': fullEvent,
+          'fromVenueDetails': true,
+        },
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -302,7 +310,6 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
 
     var success = false;
     String? errorMsg;
-
     try {
       success = await context.read<VenuesCubit>().deleteVenue(_currentVenue.id);
       if (!success && mounted) {
@@ -311,8 +318,8 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
             : 'Failed to delete venue.';
       }
     } catch (e) {
-      log('Error deleting venue: $e');
-      errorMsg = 'An unexpected error occurred while deleting the venue.';
+      log('Error calling deleteVenue cubit method: $e');
+      errorMsg = 'An unexpected error occurred during deletion.';
     }
 
     if (!mounted) return;
@@ -330,13 +337,15 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
           ),
         );
 
-      context.go('/venues');
+      if (context.canPop()) {
+        context.pop();
+      }
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(errorMsg ?? 'Failed to delete venue'),
+            content: Text(errorMsg ?? 'Failed to delete venue.'),
             backgroundColor: AppColors.error,
           ),
         );
