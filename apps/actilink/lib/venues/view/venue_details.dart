@@ -8,6 +8,7 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
@@ -186,7 +187,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                event.description,
+                                DateFormat('MMM dd, HH:mm').format(event.startTime.toLocal()),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
