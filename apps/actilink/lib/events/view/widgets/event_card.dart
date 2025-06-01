@@ -49,7 +49,13 @@ class EventCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          context.go('/events/details/${event.id}', extra: event);
+          context.push(
+            '/events/details/${event.id}',
+            extra: {
+              'event': event,
+              'fromVenueDetails': false,
+            },
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(16),
