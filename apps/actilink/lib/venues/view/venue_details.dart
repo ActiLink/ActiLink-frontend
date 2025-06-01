@@ -187,7 +187,8 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                DateFormat('MMM dd, HH:mm').format(event.startTime.toLocal()),
+                                DateFormat('MMM dd, HH:mm')
+                                    .format(event.startTime.toLocal()),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
