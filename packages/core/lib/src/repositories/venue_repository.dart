@@ -75,7 +75,13 @@ class VenueRepository {
     return Venue.fromJson(response as Map<String, dynamic>);
   }
 
-  Future<void> deleteVenue(String venueId) async {
-    await _apiService.deleteData('/venues/$venueId');
+  Future<void> deleteVenue(String id) async {
+    try {
+      log('Deleting venue $id');
+      await _apiService.deleteData('/Venues/$id');
+    } catch (e) {
+      log('deleteVenue Error for ID $id: $e');
+      rethrow;
+    }
   }
 }

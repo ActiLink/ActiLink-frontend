@@ -91,22 +91,16 @@ class VenuesCubit extends Cubit<VenuesState> {
     }
   }
 
-  Future<bool> deleteVenue(String id) async {
+  Future<bool> deleteVenue(String venueId) async {
     emit(state.copyWith(status: VenuesStatus.loading));
     try {
-      await _venueRepository.deleteVenue(id);
-      log('Venue deleted successfully: $id');
-      final updatedVenues = state.venues.where((v) => v.id != id).toList();
-      emit(
-        state.copyWith(
-          status: VenuesStatus.success,
-          venues: updatedVenues,
-          error: '',
-        ),
-      );
+      await _venueRepository.deleteVenue(venueId);
+      log('Venue deleted successfully: $venueId');
+      final updatedList = state.venues.where((v) => v.id != venueId).toList();
+      emit(state.copyWith(status: VenuesStatus.success, venues: updatedList));
       return true;
     } on ApiException catch (e) {
-      log('Error deleting venue: $e');
+      log('Error deleting venue $venueId: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,
@@ -115,7 +109,7 @@ class VenuesCubit extends Cubit<VenuesState> {
       );
       return false;
     } catch (e) {
-      log('Unexpected error deleting venue: $e');
+      log('Unexpected error deleting venue $venueId: $e');
       emit(
         state.copyWith(
           status: VenuesStatus.failure,

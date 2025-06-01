@@ -12,8 +12,13 @@ import 'package:intl/intl.dart';
 import 'package:ui/ui.dart';
 
 class EventDetailsScreen extends StatefulWidget {
-  const EventDetailsScreen({required this.event, super.key});
+  const EventDetailsScreen({
+    required this.event,
+    super.key,
+    this.fromVenueDetails = false,
+  });
   final Event event;
+  final bool fromVenueDetails;
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
@@ -66,7 +71,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 children: [
                   // Back Button
                   GestureDetector(
-                    onTap: () => context.go('/events'),
+                    onTap: () {
+                      if (widget.fromVenueDetails) {
+                        context.pop();
+                      } else {
+                        context.go('/events');
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(

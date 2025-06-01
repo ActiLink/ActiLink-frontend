@@ -58,8 +58,11 @@ final GoRouter appRouter = GoRouter(
               path: 'details/:id',
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) {
-                final event = state.extra! as Event;
-                return EventDetailsScreen(event: event);
+                final data = state.extra! as Map<String, dynamic>;
+                return EventDetailsScreen(
+                  event: data['event'] as Event,
+                  fromVenueDetails: data['fromVenueDetails'] as bool? ?? false,
+                );
               },
             ),
             GoRoute(
