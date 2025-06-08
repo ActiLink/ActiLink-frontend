@@ -1,5 +1,6 @@
 import 'package:core/src/models/base_user.dart';
 import 'package:core/src/models/hobby.dart';
+import 'package:utils/utils.dart';
 
 class User extends BaseUser {
   const User({
@@ -10,7 +11,7 @@ class User extends BaseUser {
   });
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
       hobbies: (json['hobbies'] as List<dynamic>?)

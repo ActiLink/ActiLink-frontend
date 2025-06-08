@@ -1,5 +1,6 @@
 import 'package:core/src/models.dart';
 import 'package:equatable/equatable.dart';
+import 'package:utils/utils.dart';
 
 class EventOrganizer extends Equatable {
   const EventOrganizer({
@@ -9,7 +10,7 @@ class EventOrganizer extends Equatable {
 
   factory EventOrganizer.fromJson(Map<String, dynamic> json) {
     return EventOrganizer(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       name: json['name'] as String? ?? '',
     );
   }
@@ -41,7 +42,7 @@ class EventParticipant extends Equatable {
 
   factory EventParticipant.fromJson(Map<String, dynamic> json) {
     return EventParticipant(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       name: json['name'] as String? ?? '',
     );
   }
@@ -94,7 +95,7 @@ class Event extends Equatable {
     final venueJson = json['venue'] as Map<String, dynamic>?;
 
     return Event(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       startTime: DateTime.parse(

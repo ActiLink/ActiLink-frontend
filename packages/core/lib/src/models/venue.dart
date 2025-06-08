@@ -1,6 +1,7 @@
 import 'package:core/src/models/event.dart';
 import 'package:core/src/models/location.dart';
 import 'package:equatable/equatable.dart';
+import 'package:utils/utils.dart';
 
 // This DTO is used for creating new venues
 class NewVenueDto {
@@ -42,7 +43,7 @@ class VenueOwner extends Equatable {
 
   factory VenueOwner.fromJson(Map<String, dynamic> json) {
     return VenueOwner(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       name: json['name'] as String? ?? '',
     );
   }
@@ -78,7 +79,7 @@ class Venue extends Equatable {
         .toList();
 
     return Venue(
-      id: json['id'] as String? ?? '',
+      id: JsonUtils.idToString(json['id']),
       name: json['name'] as String? ?? '',
       description: json['description'] as String? ?? '',
       location: locationJson != null

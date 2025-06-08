@@ -1,4 +1,5 @@
 import 'package:core/src/models/base_user.dart';
+import 'package:utils/utils.dart';
 
 class BusinessClient extends BaseUser {
   const BusinessClient({
@@ -10,10 +11,10 @@ class BusinessClient extends BaseUser {
 
   factory BusinessClient.fromJson(Map<String, dynamic> json) {
     return BusinessClient(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      taxId: json['taxId'] as String,
+      id: JsonUtils.idToString(json['id']),
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      taxId: json['taxId'] as String? ?? '',
     );
   }
 
